@@ -14,7 +14,178 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      feedback_replies: {
+        Row: {
+          author_id: string | null
+          author_name: string | null
+          created_at: string
+          feedback_id: string
+          id: string
+          message: string
+        }
+        Insert: {
+          author_id?: string | null
+          author_name?: string | null
+          created_at?: string
+          feedback_id: string
+          id?: string
+          message: string
+        }
+        Update: {
+          author_id?: string | null
+          author_name?: string | null
+          created_at?: string
+          feedback_id?: string
+          id?: string
+          message?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedback_replies_feedback_id_fkey"
+            columns: ["feedback_id"]
+            isOneToOne: false
+            referencedRelation: "feedbacks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feedbacks: {
+        Row: {
+          author_name: string
+          created_at: string
+          css_selector: string | null
+          id: string
+          message: string
+          page_url: string | null
+          position_x: number
+          position_y: number
+          project_id: string
+          screenshot_path: string | null
+          status: string
+          updated_at: string
+          user_agent: string | null
+          viewport_h: number | null
+          viewport_w: number | null
+        }
+        Insert: {
+          author_name?: string
+          created_at?: string
+          css_selector?: string | null
+          id?: string
+          message: string
+          page_url?: string | null
+          position_x: number
+          position_y: number
+          project_id: string
+          screenshot_path?: string | null
+          status?: string
+          updated_at?: string
+          user_agent?: string | null
+          viewport_h?: number | null
+          viewport_w?: number | null
+        }
+        Update: {
+          author_name?: string
+          created_at?: string
+          css_selector?: string | null
+          id?: string
+          message?: string
+          page_url?: string | null
+          position_x?: number
+          position_y?: number
+          project_id?: string
+          screenshot_path?: string | null
+          status?: string
+          updated_at?: string
+          user_agent?: string | null
+          viewport_h?: number | null
+          viewport_w?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedbacks_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          plan: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          plan?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          plan?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          brand_color: string
+          created_at: string
+          id: string
+          is_active: boolean
+          mockup_image_path: string | null
+          name: string
+          notify_email: boolean
+          owner_id: string
+          public_token: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          brand_color?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          mockup_image_path?: string | null
+          name: string
+          notify_email?: boolean
+          owner_id: string
+          public_token?: string
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          brand_color?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          mockup_image_path?: string | null
+          name?: string
+          notify_email?: boolean
+          owner_id?: string
+          public_token?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
