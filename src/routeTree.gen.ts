@@ -9,38 +9,175 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
+import { Route as RTokenRouteImport } from './routes/r.$token'
+import { Route as DashboardBillingRouteImport } from './routes/dashboard.billing'
+import { Route as DashboardProjectsNewRouteImport } from './routes/dashboard.projects.new'
+import { Route as DashboardProjectsProjectIdRouteImport } from './routes/dashboard.projects.$projectId'
+import { Route as ApiPublicFeedbackRouteImport } from './routes/api.public.feedback'
+import { Route as ApiPublicWidgetConfigTokenRouteImport } from './routes/api.public.widget-config.$token'
 
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/dashboard/',
+  path: '/dashboard/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RTokenRoute = RTokenRouteImport.update({
+  id: '/r/$token',
+  path: '/r/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardBillingRoute = DashboardBillingRouteImport.update({
+  id: '/dashboard/billing',
+  path: '/dashboard/billing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardProjectsNewRoute = DashboardProjectsNewRouteImport.update({
+  id: '/dashboard/projects/new',
+  path: '/dashboard/projects/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardProjectsProjectIdRoute =
+  DashboardProjectsProjectIdRouteImport.update({
+    id: '/dashboard/projects/$projectId',
+    path: '/dashboard/projects/$projectId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicFeedbackRoute = ApiPublicFeedbackRouteImport.update({
+  id: '/api/public/feedback',
+  path: '/api/public/feedback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicWidgetConfigTokenRoute =
+  ApiPublicWidgetConfigTokenRouteImport.update({
+    id: '/api/public/widget-config/$token',
+    path: '/api/public/widget-config/$token',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
+  '/dashboard/billing': typeof DashboardBillingRoute
+  '/r/$token': typeof RTokenRoute
+  '/dashboard/': typeof DashboardIndexRoute
+  '/api/public/feedback': typeof ApiPublicFeedbackRoute
+  '/dashboard/projects/$projectId': typeof DashboardProjectsProjectIdRoute
+  '/dashboard/projects/new': typeof DashboardProjectsNewRoute
+  '/api/public/widget-config/$token': typeof ApiPublicWidgetConfigTokenRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
+  '/dashboard/billing': typeof DashboardBillingRoute
+  '/r/$token': typeof RTokenRoute
+  '/dashboard': typeof DashboardIndexRoute
+  '/api/public/feedback': typeof ApiPublicFeedbackRoute
+  '/dashboard/projects/$projectId': typeof DashboardProjectsProjectIdRoute
+  '/dashboard/projects/new': typeof DashboardProjectsNewRoute
+  '/api/public/widget-config/$token': typeof ApiPublicWidgetConfigTokenRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
+  '/dashboard/billing': typeof DashboardBillingRoute
+  '/r/$token': typeof RTokenRoute
+  '/dashboard/': typeof DashboardIndexRoute
+  '/api/public/feedback': typeof ApiPublicFeedbackRoute
+  '/dashboard/projects/$projectId': typeof DashboardProjectsProjectIdRoute
+  '/dashboard/projects/new': typeof DashboardProjectsNewRoute
+  '/api/public/widget-config/$token': typeof ApiPublicWidgetConfigTokenRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/signup'
+    | '/dashboard/billing'
+    | '/r/$token'
+    | '/dashboard/'
+    | '/api/public/feedback'
+    | '/dashboard/projects/$projectId'
+    | '/dashboard/projects/new'
+    | '/api/public/widget-config/$token'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/login'
+    | '/signup'
+    | '/dashboard/billing'
+    | '/r/$token'
+    | '/dashboard'
+    | '/api/public/feedback'
+    | '/dashboard/projects/$projectId'
+    | '/dashboard/projects/new'
+    | '/api/public/widget-config/$token'
+  id:
+    | '__root__'
+    | '/'
+    | '/login'
+    | '/signup'
+    | '/dashboard/billing'
+    | '/r/$token'
+    | '/dashboard/'
+    | '/api/public/feedback'
+    | '/dashboard/projects/$projectId'
+    | '/dashboard/projects/new'
+    | '/api/public/widget-config/$token'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  LoginRoute: typeof LoginRoute
+  SignupRoute: typeof SignupRoute
+  DashboardBillingRoute: typeof DashboardBillingRoute
+  RTokenRoute: typeof RTokenRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
+  ApiPublicFeedbackRoute: typeof ApiPublicFeedbackRoute
+  DashboardProjectsProjectIdRoute: typeof DashboardProjectsProjectIdRoute
+  DashboardProjectsNewRoute: typeof DashboardProjectsNewRoute
+  ApiPublicWidgetConfigTokenRoute: typeof ApiPublicWidgetConfigTokenRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +185,69 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/r/$token': {
+      id: '/r/$token'
+      path: '/r/$token'
+      fullPath: '/r/$token'
+      preLoaderRoute: typeof RTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/billing': {
+      id: '/dashboard/billing'
+      path: '/dashboard/billing'
+      fullPath: '/dashboard/billing'
+      preLoaderRoute: typeof DashboardBillingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/projects/new': {
+      id: '/dashboard/projects/new'
+      path: '/dashboard/projects/new'
+      fullPath: '/dashboard/projects/new'
+      preLoaderRoute: typeof DashboardProjectsNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/projects/$projectId': {
+      id: '/dashboard/projects/$projectId'
+      path: '/dashboard/projects/$projectId'
+      fullPath: '/dashboard/projects/$projectId'
+      preLoaderRoute: typeof DashboardProjectsProjectIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/feedback': {
+      id: '/api/public/feedback'
+      path: '/api/public/feedback'
+      fullPath: '/api/public/feedback'
+      preLoaderRoute: typeof ApiPublicFeedbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/widget-config/$token': {
+      id: '/api/public/widget-config/$token'
+      path: '/api/public/widget-config/$token'
+      fullPath: '/api/public/widget-config/$token'
+      preLoaderRoute: typeof ApiPublicWidgetConfigTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  LoginRoute: LoginRoute,
+  SignupRoute: SignupRoute,
+  DashboardBillingRoute: DashboardBillingRoute,
+  RTokenRoute: RTokenRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
+  ApiPublicFeedbackRoute: ApiPublicFeedbackRoute,
+  DashboardProjectsProjectIdRoute: DashboardProjectsProjectIdRoute,
+  DashboardProjectsNewRoute: DashboardProjectsNewRoute,
+  ApiPublicWidgetConfigTokenRoute: ApiPublicWidgetConfigTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
