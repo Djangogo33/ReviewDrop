@@ -14,6 +14,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as DashboardProjectsNewRouteImport } from './routes/dashboard.projects.new'
+import { Route as DashboardProjectsProjectIdRouteImport } from './routes/dashboard.projects.$projectId'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -40,12 +41,19 @@ const DashboardProjectsNewRoute = DashboardProjectsNewRouteImport.update({
   path: '/dashboard/projects/new',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardProjectsProjectIdRoute =
+  DashboardProjectsProjectIdRouteImport.update({
+    id: '/dashboard/projects/$projectId',
+    path: '/dashboard/projects/$projectId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/projects/$projectId': typeof DashboardProjectsProjectIdRoute
   '/dashboard/projects/new': typeof DashboardProjectsNewRoute
 }
 export interface FileRoutesByTo {
@@ -53,6 +61,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/dashboard/projects/$projectId': typeof DashboardProjectsProjectIdRoute
   '/dashboard/projects/new': typeof DashboardProjectsNewRoute
 }
 export interface FileRoutesById {
@@ -61,6 +70,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/projects/$projectId': typeof DashboardProjectsProjectIdRoute
   '/dashboard/projects/new': typeof DashboardProjectsNewRoute
 }
 export interface FileRouteTypes {
@@ -70,15 +80,23 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/dashboard/'
+    | '/dashboard/projects/$projectId'
     | '/dashboard/projects/new'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/signup' | '/dashboard' | '/dashboard/projects/new'
+  to:
+    | '/'
+    | '/login'
+    | '/signup'
+    | '/dashboard'
+    | '/dashboard/projects/$projectId'
+    | '/dashboard/projects/new'
   id:
     | '__root__'
     | '/'
     | '/login'
     | '/signup'
     | '/dashboard/'
+    | '/dashboard/projects/$projectId'
     | '/dashboard/projects/new'
   fileRoutesById: FileRoutesById
 }
@@ -87,6 +105,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardProjectsProjectIdRoute: typeof DashboardProjectsProjectIdRoute
   DashboardProjectsNewRoute: typeof DashboardProjectsNewRoute
 }
 
@@ -127,6 +146,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardProjectsNewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/projects/$projectId': {
+      id: '/dashboard/projects/$projectId'
+      path: '/dashboard/projects/$projectId'
+      fullPath: '/dashboard/projects/$projectId'
+      preLoaderRoute: typeof DashboardProjectsProjectIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -135,6 +161,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
   DashboardIndexRoute: DashboardIndexRoute,
+  DashboardProjectsProjectIdRoute: DashboardProjectsProjectIdRoute,
   DashboardProjectsNewRoute: DashboardProjectsNewRoute,
 }
 export const routeTree = rootRouteImport
