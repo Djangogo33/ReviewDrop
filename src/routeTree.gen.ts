@@ -17,6 +17,8 @@ import { Route as RTokenRouteImport } from './routes/r.$token'
 import { Route as DashboardBillingRouteImport } from './routes/dashboard.billing'
 import { Route as DashboardProjectsNewRouteImport } from './routes/dashboard.projects.new'
 import { Route as DashboardProjectsProjectIdRouteImport } from './routes/dashboard.projects.$projectId'
+import { Route as ApiPublicFeedbackRouteImport } from './routes/api.public.feedback'
+import { Route as ApiPublicWidgetConfigTokenRouteImport } from './routes/api.public.widget-config.$token'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -59,6 +61,17 @@ const DashboardProjectsProjectIdRoute =
     path: '/dashboard/projects/$projectId',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicFeedbackRoute = ApiPublicFeedbackRouteImport.update({
+  id: '/api/public/feedback',
+  path: '/api/public/feedback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicWidgetConfigTokenRoute =
+  ApiPublicWidgetConfigTokenRouteImport.update({
+    id: '/api/public/widget-config/$token',
+    path: '/api/public/widget-config/$token',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -67,8 +80,10 @@ export interface FileRoutesByFullPath {
   '/dashboard/billing': typeof DashboardBillingRoute
   '/r/$token': typeof RTokenRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/api/public/feedback': typeof ApiPublicFeedbackRoute
   '/dashboard/projects/$projectId': typeof DashboardProjectsProjectIdRoute
   '/dashboard/projects/new': typeof DashboardProjectsNewRoute
+  '/api/public/widget-config/$token': typeof ApiPublicWidgetConfigTokenRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -77,8 +92,10 @@ export interface FileRoutesByTo {
   '/dashboard/billing': typeof DashboardBillingRoute
   '/r/$token': typeof RTokenRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/api/public/feedback': typeof ApiPublicFeedbackRoute
   '/dashboard/projects/$projectId': typeof DashboardProjectsProjectIdRoute
   '/dashboard/projects/new': typeof DashboardProjectsNewRoute
+  '/api/public/widget-config/$token': typeof ApiPublicWidgetConfigTokenRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -88,8 +105,10 @@ export interface FileRoutesById {
   '/dashboard/billing': typeof DashboardBillingRoute
   '/r/$token': typeof RTokenRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/api/public/feedback': typeof ApiPublicFeedbackRoute
   '/dashboard/projects/$projectId': typeof DashboardProjectsProjectIdRoute
   '/dashboard/projects/new': typeof DashboardProjectsNewRoute
+  '/api/public/widget-config/$token': typeof ApiPublicWidgetConfigTokenRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -100,8 +119,10 @@ export interface FileRouteTypes {
     | '/dashboard/billing'
     | '/r/$token'
     | '/dashboard/'
+    | '/api/public/feedback'
     | '/dashboard/projects/$projectId'
     | '/dashboard/projects/new'
+    | '/api/public/widget-config/$token'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -110,8 +131,10 @@ export interface FileRouteTypes {
     | '/dashboard/billing'
     | '/r/$token'
     | '/dashboard'
+    | '/api/public/feedback'
     | '/dashboard/projects/$projectId'
     | '/dashboard/projects/new'
+    | '/api/public/widget-config/$token'
   id:
     | '__root__'
     | '/'
@@ -120,8 +143,10 @@ export interface FileRouteTypes {
     | '/dashboard/billing'
     | '/r/$token'
     | '/dashboard/'
+    | '/api/public/feedback'
     | '/dashboard/projects/$projectId'
     | '/dashboard/projects/new'
+    | '/api/public/widget-config/$token'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -131,8 +156,10 @@ export interface RootRouteChildren {
   DashboardBillingRoute: typeof DashboardBillingRoute
   RTokenRoute: typeof RTokenRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
+  ApiPublicFeedbackRoute: typeof ApiPublicFeedbackRoute
   DashboardProjectsProjectIdRoute: typeof DashboardProjectsProjectIdRoute
   DashboardProjectsNewRoute: typeof DashboardProjectsNewRoute
+  ApiPublicWidgetConfigTokenRoute: typeof ApiPublicWidgetConfigTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -193,6 +220,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardProjectsProjectIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/feedback': {
+      id: '/api/public/feedback'
+      path: '/api/public/feedback'
+      fullPath: '/api/public/feedback'
+      preLoaderRoute: typeof ApiPublicFeedbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/widget-config/$token': {
+      id: '/api/public/widget-config/$token'
+      path: '/api/public/widget-config/$token'
+      fullPath: '/api/public/widget-config/$token'
+      preLoaderRoute: typeof ApiPublicWidgetConfigTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -203,8 +244,10 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardBillingRoute: DashboardBillingRoute,
   RTokenRoute: RTokenRoute,
   DashboardIndexRoute: DashboardIndexRoute,
+  ApiPublicFeedbackRoute: ApiPublicFeedbackRoute,
   DashboardProjectsProjectIdRoute: DashboardProjectsProjectIdRoute,
   DashboardProjectsNewRoute: DashboardProjectsNewRoute,
+  ApiPublicWidgetConfigTokenRoute: ApiPublicWidgetConfigTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
