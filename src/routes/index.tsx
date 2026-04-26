@@ -2,6 +2,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
 import { MessageSquarePlus, MousePointerClick, Bell, Image, Code2, Check } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -147,6 +153,77 @@ function Landing() {
                 <Button className="w-full">Essayer Pro</Button>
               </Link>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section id="faq" className="container mx-auto px-4 py-20">
+        <h2 className="text-center text-3xl font-bold">Questions fréquentes</h2>
+        <div className="mx-auto mt-10 max-w-2xl">
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="q1">
+              <AccordionTrigger>Comment installer le widget sur mon site ?</AccordionTrigger>
+              <AccordionContent>
+                Une fois votre projet créé, vous obtenez un snippet à coller dans la balise{" "}
+                <code className="rounded bg-muted px-1 py-0.5 text-xs">&lt;head&gt;</code> de votre site.
+                Compatible avec WordPress, Webflow, Framer, Shopify, ainsi que toutes les apps
+                React, Vue ou Svelte (SPA inclus).
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="q2">
+              <AccordionTrigger>Mes clients doivent-ils créer un compte ?</AccordionTrigger>
+              <AccordionContent>
+                Non. Ils cliquent sur le widget, écrivent leur retour et c'est tout.
+                Vous recevez le contexte complet : URL, position du clic, capture d'écran et
+                navigateur utilisé. Pas de friction pour le client.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="q3">
+              <AccordionTrigger>Et si je n'ai qu'une maquette, pas encore de site ?</AccordionTrigger>
+              <AccordionContent>
+                Créez un projet de type « Maquette » et uploadez votre image (PNG ou JPG).
+                Vous obtenez un lien à partager : votre client commente directement sur la
+                maquette, comme s'il était sur un vrai site.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="q4">
+              <AccordionTrigger>Quelle est la différence entre Free et Pro ?</AccordionTrigger>
+              <AccordionContent>
+                Le plan Free vous permet de gérer jusqu'à 3 projets actifs avec un nombre
+                illimité de feedbacks. Le plan Pro à 9€/mois débloque un nombre illimité de
+                projets, la personnalisation du widget (couleur, position) et un support
+                prioritaire.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="q5">
+              <AccordionTrigger>Puis-je annuler à tout moment ?</AccordionTrigger>
+              <AccordionContent>
+                Oui. L'abonnement Pro est sans engagement. Vous pouvez annuler en un clic
+                depuis la page Facturation et conserver l'accès jusqu'à la fin du mois en cours.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="q6">
+              <AccordionTrigger>Mes données sont-elles hébergées en Europe ?</AccordionTrigger>
+              <AccordionContent>
+                Oui. ReviewDrop est hébergé sur une infrastructure européenne et conforme au RGPD.
+                Vous restez propriétaire de vos données et pouvez les exporter ou les supprimer
+                à tout moment.
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </div>
+      </section>
+
+      {/* CTA final */}
+      <section className="border-t border-border bg-muted/30 py-16">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold">Prêt à arrêter les emails de feedback en cascade ?</h2>
+          <p className="mt-3 text-muted-foreground">3 projets gratuits, sans carte bancaire.</p>
+          <div className="mt-8">
+            <Link to="/signup">
+              <Button size="lg">Commencer gratuitement</Button>
+            </Link>
           </div>
         </div>
       </section>
