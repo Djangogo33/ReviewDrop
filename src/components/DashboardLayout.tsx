@@ -1,7 +1,7 @@
 import { Link, useNavigate, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
-import { MessageSquarePlus, LayoutDashboard, CreditCard, LogOut, User } from "lucide-react";
+import { MessageSquarePlus, LayoutDashboard, CreditCard, LogOut, User, Code2 } from "lucide-react";
 import { ReactNode } from "react";
 
 export function DashboardLayout({ children }: { children: ReactNode }) {
