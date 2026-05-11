@@ -14,6 +14,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as RTokenRouteImport } from './routes/r.$token'
+import { Route as DashboardInstallRouteImport } from './routes/dashboard.install'
 import { Route as DashboardBillingRouteImport } from './routes/dashboard.billing'
 import { Route as DashboardAccountRouteImport } from './routes/dashboard.account'
 import { Route as DashboardProjectsNewRouteImport } from './routes/dashboard.projects.new'
@@ -44,6 +45,11 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
 const RTokenRoute = RTokenRouteImport.update({
   id: '/r/$token',
   path: '/r/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardInstallRoute = DashboardInstallRouteImport.update({
+  id: '/dashboard/install',
+  path: '/dashboard/install',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardBillingRoute = DashboardBillingRouteImport.update({
@@ -85,6 +91,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/dashboard/account': typeof DashboardAccountRoute
   '/dashboard/billing': typeof DashboardBillingRoute
+  '/dashboard/install': typeof DashboardInstallRoute
   '/r/$token': typeof RTokenRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/api/public/feedback': typeof ApiPublicFeedbackRoute
@@ -98,6 +105,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/dashboard/account': typeof DashboardAccountRoute
   '/dashboard/billing': typeof DashboardBillingRoute
+  '/dashboard/install': typeof DashboardInstallRoute
   '/r/$token': typeof RTokenRoute
   '/dashboard': typeof DashboardIndexRoute
   '/api/public/feedback': typeof ApiPublicFeedbackRoute
@@ -112,6 +120,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/dashboard/account': typeof DashboardAccountRoute
   '/dashboard/billing': typeof DashboardBillingRoute
+  '/dashboard/install': typeof DashboardInstallRoute
   '/r/$token': typeof RTokenRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/api/public/feedback': typeof ApiPublicFeedbackRoute
@@ -127,6 +136,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/dashboard/account'
     | '/dashboard/billing'
+    | '/dashboard/install'
     | '/r/$token'
     | '/dashboard/'
     | '/api/public/feedback'
@@ -140,6 +150,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/dashboard/account'
     | '/dashboard/billing'
+    | '/dashboard/install'
     | '/r/$token'
     | '/dashboard'
     | '/api/public/feedback'
@@ -153,6 +164,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/dashboard/account'
     | '/dashboard/billing'
+    | '/dashboard/install'
     | '/r/$token'
     | '/dashboard/'
     | '/api/public/feedback'
@@ -167,6 +179,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   DashboardAccountRoute: typeof DashboardAccountRoute
   DashboardBillingRoute: typeof DashboardBillingRoute
+  DashboardInstallRoute: typeof DashboardInstallRoute
   RTokenRoute: typeof RTokenRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
   ApiPublicFeedbackRoute: typeof ApiPublicFeedbackRoute
@@ -210,6 +223,13 @@ declare module '@tanstack/react-router' {
       path: '/r/$token'
       fullPath: '/r/$token'
       preLoaderRoute: typeof RTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/install': {
+      id: '/dashboard/install'
+      path: '/dashboard/install'
+      fullPath: '/dashboard/install'
+      preLoaderRoute: typeof DashboardInstallRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard/billing': {
@@ -263,6 +283,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   DashboardAccountRoute: DashboardAccountRoute,
   DashboardBillingRoute: DashboardBillingRoute,
+  DashboardInstallRoute: DashboardInstallRoute,
   RTokenRoute: RTokenRoute,
   DashboardIndexRoute: DashboardIndexRoute,
   ApiPublicFeedbackRoute: ApiPublicFeedbackRoute,
