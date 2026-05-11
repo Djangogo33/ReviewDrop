@@ -16,6 +16,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
 
   const navItems = [
     { to: "/dashboard", label: "Projets", icon: LayoutDashboard },
+    { to: "/dashboard/install", label: "Installer le widget", icon: Code2 },
     { to: "/dashboard/account", label: "Mon compte", icon: User },
     { to: "/dashboard/billing", label: "Facturation", icon: CreditCard },
   ] as const;
