@@ -352,9 +352,23 @@ function FeedbackDetail({
     })();
   }, [feedback.id]);
 
-  const screenshotUrl = feedback.screenshot_path
-    ? supabase.storage.from("screenshots").getPublicUrl(feedback.screenshot_path).data.publicUrl
-    : null;
+  const [screenshotUrl, setScreenshotUrl] = useState<string | null>(null);
+  useEffect(() => {
+    let mounted = true;
+    if (!feedback.screenshot_path) {
+      setScreenshotUrl(null);
+      return;
+    }
+    supabase.storage
+      .from("screenshots")
+      .createSignedUrl(feedback.screenshot_path, 300)
+      .then(({ data }) => {
+        if (mounted) setScreenshotUrl(data?.signedUrl ?? null);
+      });
+    return () => {
+      mounted = false;
+    };
+  }, [feedback.screenshot_path]);
 
   const submitReply = async (e: React.FormEvent) => {
     e.preventDefault();
