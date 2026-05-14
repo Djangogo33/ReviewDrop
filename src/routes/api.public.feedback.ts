@@ -133,7 +133,8 @@ export const Route = createFileRoute("/api/public/feedback")({
             .single();
 
           if (insErr) {
-            return new Response(JSON.stringify({ error: insErr.message }), {
+            console.error("feedback insert failed", insErr);
+            return new Response(JSON.stringify({ error: "Failed to submit feedback. Please try again." }), {
               status: 500,
               headers: { "Content-Type": "application/json", ...corsHeaders },
             });
