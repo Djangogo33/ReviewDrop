@@ -22,21 +22,54 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type",
 };
 
+// Simple per-isolate sliding-window rate limiter (best-effort defense; resets per worker isolate)
+const RATE_LIMIT_MAX = 20; // requests
+const RATE_LIMIT_WINDOW_MS = 60_000; // per minute
+const rateBuckets = new Map<string, number[]>();
+function rateLimited(key: string): boolean {
+  const now = Date.now();
+  const arr = (rateBuckets.get(key) ?? []).filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
+  if (arr.length >= RATE_LIMIT_MAX) {
+    rateBuckets.set(key, arr);
+    return true;
+  }
+  arr.push(now);
+  rateBuckets.set(key, arr);
+  // opportunistic cleanup
+  if (rateBuckets.size > 5000) {
+    for (const [k, v] of rateBuckets) {
+      if (v.every((t) => now - t >= RATE_LIMIT_WINDOW_MS)) rateBuckets.delete(k);
+    }
+  }
+  return false;
+}
+
 export const Route = createFileRoute("/api/public/feedback")({
   server: {
     handlers: {
       OPTIONS: async () => new Response(null, { status: 204, headers: corsHeaders }),
       POST: async ({ request }) => {
         try {
+          const ip =
+            request.headers.get("cf-connecting-ip") ||
+            request.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
+            "unknown";
           const body = await request.json();
           const parsed = FeedbackSchema.safeParse(body);
           if (!parsed.success) {
-            return new Response(JSON.stringify({ error: "Invalid input", details: parsed.error.flatten() }), {
+            return new Response(JSON.stringify({ error: "Invalid input" }), {
               status: 400,
               headers: { "Content-Type": "application/json", ...corsHeaders },
             });
           }
           const data = parsed.data;
+
+          if (rateLimited(`${ip}:${data.project_token}`)) {
+            return new Response(JSON.stringify({ error: "Too many requests" }), {
+              status: 429,
+              headers: { "Content-Type": "application/json", "Retry-After": "60", ...corsHeaders },
+            });
+          }
 
           // Find project by public token
           const { data: project, error: projErr } = await supabaseAdmin
