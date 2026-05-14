@@ -145,6 +145,7 @@ export const Route = createFileRoute("/api/public/feedback")({
             headers: { "Content-Type": "application/json", ...corsHeaders },
           });
         } catch (err) {
+          console.error("feedback handler error", err);
           return new Response(JSON.stringify({ error: "Server error" }), {
             status: 500,
             headers: { "Content-Type": "application/json", ...corsHeaders },
