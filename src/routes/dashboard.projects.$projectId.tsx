@@ -33,6 +33,43 @@ const STATUS_LABEL: Record<string, string> = {
   closed: "Résolu",
 };
 
+function csvEscape(v: unknown): string {
+  if (v === null || v === undefined) return "";
+  const s = String(v).replace(/\r?\n/g, " ");
+  return /[",;]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+}
+
+function exportFeedbacksCsv(project: Project, feedbacks: Feedback[]) {
+  const headers = [
+    "id", "created_at", "status", "author_name", "author_email",
+    "message", "page_url", "css_selector", "position_x", "position_y",
+  ];
+  const rows = feedbacks.map((f) => [
+    f.id,
+    f.created_at,
+    f.status,
+    f.author_name,
+    (f as Feedback & { author_email?: string }).author_email ?? "",
+    f.message,
+    f.page_url,
+    f.css_selector,
+    f.position_x,
+    f.position_y,
+  ].map(csvEscape).join(","));
+  const csv = [headers.join(","), ...rows].join("\n");
+  const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  const slug = project.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "projet";
+  a.download = `feedbacks-${slug}-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  toast.success(`${feedbacks.length} feedback${feedbacks.length > 1 ? "s" : ""} exporté${feedbacks.length > 1 ? "s" : ""}`);
+}
+
 function ProjectPage() {
   const { projectId } = Route.useParams();
   const { user } = useAuth();
