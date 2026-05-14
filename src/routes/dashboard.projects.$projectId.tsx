@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { ArrowLeft, Copy, Check, Trash2, Settings, MessageSquare, ExternalLink } from "lucide-react";
+import { ArrowLeft, Copy, Check, Trash2, Settings, MessageSquare, ExternalLink, Download } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Project = Tables<"projects">;
@@ -32,6 +32,43 @@ const STATUS_LABEL: Record<string, string> = {
   in_progress: "En cours",
   closed: "Résolu",
 };
+
+function csvEscape(v: unknown): string {
+  if (v === null || v === undefined) return "";
+  const s = String(v).replace(/\r?\n/g, " ");
+  return /[",;]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+}
+
+function exportFeedbacksCsv(project: Project, feedbacks: Feedback[]) {
+  const headers = [
+    "id", "created_at", "status", "author_name", "author_email",
+    "message", "page_url", "css_selector", "position_x", "position_y",
+  ];
+  const rows = feedbacks.map((f) => [
+    f.id,
+    f.created_at,
+    f.status,
+    f.author_name,
+    (f as Feedback & { author_email?: string }).author_email ?? "",
+    f.message,
+    f.page_url,
+    f.css_selector,
+    f.position_x,
+    f.position_y,
+  ].map(csvEscape).join(","));
+  const csv = [headers.join(","), ...rows].join("\n");
+  const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  const slug = project.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "projet";
+  a.download = `feedbacks-${slug}-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  toast.success(`${feedbacks.length} feedback${feedbacks.length > 1 ? "s" : ""} exporté${feedbacks.length > 1 ? "s" : ""}`);
+}
 
 function ProjectPage() {
   const { projectId } = Route.useParams();
@@ -144,9 +181,14 @@ function ProjectPage() {
             {project.type === "live" ? "Site web" : "Maquette"} · {feedbacks.length} feedback{feedbacks.length > 1 ? "s" : ""}
           </p>
         </div>
-        <Button variant="outline" size="sm" onClick={() => setShowSettings((s) => !s)}>
-          <Settings className="h-4 w-4 mr-2" /> Paramètres
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={() => exportFeedbacksCsv(project, feedbacks)} disabled={feedbacks.length === 0}>
+            <Download className="h-4 w-4 mr-2" /> Export CSV
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setShowSettings((s) => !s)}>
+            <Settings className="h-4 w-4 mr-2" /> Paramètres
+          </Button>
+        </div>
       </div>
 
       {showSettings && <ProjectSettings project={project} onUpdate={setProject} />}
