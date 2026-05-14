@@ -144,9 +144,14 @@ function ProjectPage() {
             {project.type === "live" ? "Site web" : "Maquette"} · {feedbacks.length} feedback{feedbacks.length > 1 ? "s" : ""}
           </p>
         </div>
-        <Button variant="outline" size="sm" onClick={() => setShowSettings((s) => !s)}>
-          <Settings className="h-4 w-4 mr-2" /> Paramètres
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={() => exportFeedbacksCsv(project, feedbacks)} disabled={feedbacks.length === 0}>
+            <Download className="h-4 w-4 mr-2" /> Export CSV
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setShowSettings((s) => !s)}>
+            <Settings className="h-4 w-4 mr-2" /> Paramètres
+          </Button>
+        </div>
       </div>
 
       {showSettings && <ProjectSettings project={project} onUpdate={setProject} />}
