@@ -5,8 +5,9 @@ import { useAuth } from "@/lib/auth-context";
 import { RequireAuth } from "@/components/RequireAuth";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
-import { Plus, MessageSquare, Globe, Image as ImageIcon, Sparkles, Code2, Bell, Check } from "lucide-react";
+import { Plus, MessageSquare, Globe, Image as ImageIcon, Sparkles, Code2, Bell, Check, Zap } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
+import { getLimits, PLAN_LABEL, normalizePlan, type PlanId } from "@/lib/plans";
 
 type Project = Tables<"projects"> & { open_count: number };
 
