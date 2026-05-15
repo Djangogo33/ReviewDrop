@@ -24,6 +24,7 @@
 
   var BRAND = "#6366f1";
   var PROJECT_NAME = "";
+  var SHOW_BADGE = true;
 
   // Fetch config
   fetch(origin + "/api/public/widget-config/" + encodeURIComponent(token))
@@ -32,6 +33,7 @@
       if (!data || !data.project || !data.project.is_active) return;
       BRAND = data.project.brand_color || BRAND;
       PROJECT_NAME = data.project.name || "";
+      SHOW_BADGE = data.project.show_badge !== false;
       init();
     })
     .catch(function () {});
