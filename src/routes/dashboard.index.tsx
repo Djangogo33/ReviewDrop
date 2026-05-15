@@ -27,6 +27,7 @@ const ONBOARDING_DISMISSED_KEY = "reviewdrop_onboarding_dismissed";
 function DashboardPage() {
   const { user } = useAuth();
   const [projects, setProjects] = useState<Project[]>([]);
+  const [plan, setPlan] = useState<PlanId>("free");
   const [loading, setLoading] = useState(true);
   const [onboardingDismissed, setOnboardingDismissed] = useState(false);
 
