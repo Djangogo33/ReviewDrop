@@ -9,8 +9,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { ArrowLeft, Copy, Check, Trash2, Settings, MessageSquare, ExternalLink, Download } from "lucide-react";
+import { ArrowLeft, Copy, Check, Trash2, Settings, MessageSquare, ExternalLink, Download, Lock } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
+import { getLimits, normalizePlan, type PlanId, DEFAULT_BRAND_COLOR } from "@/lib/plans";
 
 type Project = Tables<"projects">;
 type Feedback = Tables<"feedbacks">;
@@ -80,20 +81,25 @@ function ProjectPage() {
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [plan, setPlan] = useState<PlanId>("free");
 
   useEffect(() => {
     if (!user) return;
     let mounted = true;
     (async () => {
-      const { data: p } = await supabase.from("projects").select("*").eq("id", projectId).single();
-      const { data: f } = await supabase
-        .from("feedbacks")
-        .select("*")
-        .eq("project_id", projectId)
-        .order("created_at", { ascending: false });
+      const [{ data: p }, { data: f }, { data: prof }] = await Promise.all([
+        supabase.from("projects").select("*").eq("id", projectId).single(),
+        supabase
+          .from("feedbacks")
+          .select("*")
+          .eq("project_id", projectId)
+          .order("created_at", { ascending: false }),
+        supabase.from("profiles").select("plan").eq("id", user.id).maybeSingle(),
+      ]);
       if (mounted) {
         setProject(p);
         setFeedbacks(f || []);
+        setPlan(normalizePlan(prof?.plan));
         setLoading(false);
       }
     })();
@@ -182,16 +188,24 @@ function ProjectPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={() => exportFeedbacksCsv(project, feedbacks)} disabled={feedbacks.length === 0}>
-            <Download className="h-4 w-4 mr-2" /> Export CSV
-          </Button>
+          {getLimits(plan).csvExport ? (
+            <Button variant="outline" size="sm" onClick={() => exportFeedbacksCsv(project, feedbacks)} disabled={feedbacks.length === 0}>
+              <Download className="h-4 w-4 mr-2" /> Export CSV
+            </Button>
+          ) : (
+            <Link to="/dashboard/billing">
+              <Button variant="outline" size="sm" title="Disponible sur Pro et Max">
+                <Lock className="h-4 w-4 mr-2" /> Export CSV
+              </Button>
+            </Link>
+          )}
           <Button variant="outline" size="sm" onClick={() => setShowSettings((s) => !s)}>
             <Settings className="h-4 w-4 mr-2" /> Paramètres
           </Button>
         </div>
       </div>
 
-      {showSettings && <ProjectSettings project={project} onUpdate={setProject} />}
+      {showSettings && <ProjectSettings project={project} onUpdate={setProject} plan={plan} />}
 
       {/* Integration card */}
       <div className="rounded-lg border border-border bg-card p-5 mb-6">
@@ -475,7 +489,8 @@ function FeedbackDetail({
   );
 }
 
-function ProjectSettings({ project, onUpdate }: { project: Project; onUpdate: (p: Project) => void }) {
+function ProjectSettings({ project, onUpdate, plan }: { project: Project; onUpdate: (p: Project) => void; plan: PlanId }) {
+  const limits = getLimits(plan);
   const [name, setName] = useState(project.name);
   const [color, setColor] = useState(project.brand_color);
   const [active, setActive] = useState(project.is_active);
@@ -486,7 +501,12 @@ function ProjectSettings({ project, onUpdate }: { project: Project; onUpdate: (p
     setSaving(true);
     const { data, error } = await supabase
       .from("projects")
-      .update({ name, brand_color: color, is_active: active, notify_email: notify })
+      .update({
+        name,
+        brand_color: limits.customBrandColor ? color : DEFAULT_BRAND_COLOR,
+        is_active: active,
+        notify_email: notify,
+      })
       .eq("id", project.id)
       .select()
       .single();
@@ -531,10 +551,29 @@ function ProjectSettings({ project, onUpdate }: { project: Project; onUpdate: (p
         <Input id="pname" value={name} onChange={(e) => setName(e.target.value)} className="mt-1" />
       </div>
       <div>
-        <Label htmlFor="pcolor">Couleur du widget</Label>
+        <div className="flex items-center justify-between">
+          <Label htmlFor="pcolor">Couleur du widget</Label>
+          {!limits.customBrandColor && (
+            <Link to="/dashboard/billing" className="text-xs text-primary hover:underline inline-flex items-center gap-1">
+              <Lock className="h-3 w-3" /> Réservé aux plans Pro et Max
+            </Link>
+          )}
+        </div>
         <div className="flex items-center gap-2 mt-1">
-          <Input id="pcolor" type="color" value={color} onChange={(e) => setColor(e.target.value)} className="w-16 h-10 p-1" />
-          <Input value={color} onChange={(e) => setColor(e.target.value)} className="flex-1" />
+          <Input
+            id="pcolor"
+            type="color"
+            value={limits.customBrandColor ? color : DEFAULT_BRAND_COLOR}
+            onChange={(e) => setColor(e.target.value)}
+            disabled={!limits.customBrandColor}
+            className="w-16 h-10 p-1 disabled:opacity-50"
+          />
+          <Input
+            value={limits.customBrandColor ? color : DEFAULT_BRAND_COLOR}
+            onChange={(e) => setColor(e.target.value)}
+            disabled={!limits.customBrandColor}
+            className="flex-1"
+          />
         </div>
       </div>
       <div className="flex items-center gap-2">

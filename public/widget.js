@@ -24,6 +24,7 @@
 
   var BRAND = "#6366f1";
   var PROJECT_NAME = "";
+  var SHOW_BADGE = true;
 
   // Fetch config
   fetch(origin + "/api/public/widget-config/" + encodeURIComponent(token))
@@ -32,6 +33,7 @@
       if (!data || !data.project || !data.project.is_active) return;
       BRAND = data.project.brand_color || BRAND;
       PROJECT_NAME = data.project.name || "";
+      SHOW_BADGE = data.project.show_badge !== false;
       init();
     })
     .catch(function () {});
@@ -156,7 +158,9 @@
         '<div id="rdrop-modal-actions">' +
         '<button class="rdrop-cancel" id="rdrop-cancel">Annuler</button>' +
         '<button class="rdrop-submit" id="rdrop-submit">Envoyer</button>' +
-        "</div></div>";
+        "</div>" +
+        (SHOW_BADGE ? '<div style="margin-top:12px;text-align:center;font-size:11px;color:#999;">Propulsé par <a href="https://reviewdrop.app" target="_blank" rel="noopener" style="color:#6366f1;text-decoration:none;font-weight:500;">ReviewDrop</a></div>' : '') +
+        "</div>";
       root.appendChild(bg);
 
       var nameInput = bg.querySelector("#rdrop-name");

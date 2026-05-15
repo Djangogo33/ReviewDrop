@@ -5,8 +5,9 @@ import { useAuth } from "@/lib/auth-context";
 import { RequireAuth } from "@/components/RequireAuth";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
-import { Plus, MessageSquare, Globe, Image as ImageIcon, Sparkles, Code2, Bell, Check } from "lucide-react";
+import { Plus, MessageSquare, Globe, Image as ImageIcon, Sparkles, Code2, Bell, Check, Zap } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
+import { getLimits, PLAN_LABEL, normalizePlan, type PlanId } from "@/lib/plans";
 
 type Project = Tables<"projects"> & { open_count: number };
 
@@ -26,6 +27,7 @@ const ONBOARDING_DISMISSED_KEY = "reviewdrop_onboarding_dismissed";
 function DashboardPage() {
   const { user } = useAuth();
   const [projects, setProjects] = useState<Project[]>([]);
+  const [plan, setPlan] = useState<PlanId>("free");
   const [loading, setLoading] = useState(true);
   const [onboardingDismissed, setOnboardingDismissed] = useState(false);
 
@@ -39,10 +41,11 @@ function DashboardPage() {
     if (!user) return;
     let mounted = true;
     (async () => {
-      const { data: projectsData } = await supabase
-        .from("projects")
-        .select("*")
-        .order("created_at", { ascending: false });
+      const [{ data: profileData }, { data: projectsData }] = await Promise.all([
+        supabase.from("profiles").select("plan").eq("id", user.id).maybeSingle(),
+        supabase.from("projects").select("*").order("created_at", { ascending: false }),
+      ]);
+      if (mounted) setPlan(normalizePlan(profileData?.plan));
 
       if (!projectsData) {
         if (mounted) {
@@ -92,20 +95,63 @@ function DashboardPage() {
         />
       )}
 
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold">Mes projets</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            {projects.length} projet{projects.length > 1 ? "s" : ""}
-          </p>
-        </div>
-        <Link to="/dashboard/projects/new">
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            Nouveau projet
-          </Button>
-        </Link>
-      </div>
+      {(() => {
+        const limits = getLimits(plan);
+        const max = limits.maxActiveProjects;
+        const atLimit = max !== null && projects.length >= max;
+        const planIcon = plan === "max" ? <Zap className="h-3 w-3" /> : plan === "pro" ? <Sparkles className="h-3 w-3" /> : null;
+        return (
+          <div className="flex items-center justify-between mb-8 gap-4 flex-wrap">
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-2xl font-bold">Mes projets</h1>
+                <Link
+                  to="/dashboard/billing"
+                  className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ${
+                    plan === "free"
+                      ? "bg-muted text-muted-foreground hover:bg-muted/80"
+                      : "bg-primary/10 text-primary hover:bg-primary/20"
+                  } transition-colors`}
+                >
+                  {planIcon}
+                  {PLAN_LABEL[plan]}
+                </Link>
+              </div>
+              <p className="text-sm text-muted-foreground mt-1">
+                {projects.length} projet{projects.length > 1 ? "s" : ""}
+                {max !== null && (
+                  <>
+                    {" "}sur {max}
+                    {atLimit && (
+                      <>
+                        {" — "}
+                        <Link to="/dashboard/billing" className="text-primary hover:underline font-medium">
+                          Limite atteinte, passez à un plan supérieur
+                        </Link>
+                      </>
+                    )}
+                  </>
+                )}
+              </p>
+            </div>
+            {atLimit ? (
+              <Link to="/dashboard/billing">
+                <Button variant="outline">
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  Augmenter ma limite
+                </Button>
+              </Link>
+            ) : (
+              <Link to="/dashboard/projects/new">
+                <Button>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Nouveau projet
+                </Button>
+              </Link>
+            )}
+          </div>
+        );
+      })()}
 
       {loading ? (
         <div className="text-center py-12 text-muted-foreground">Chargement...</div>
