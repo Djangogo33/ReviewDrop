@@ -41,10 +41,11 @@ function DashboardPage() {
     if (!user) return;
     let mounted = true;
     (async () => {
-      const { data: projectsData } = await supabase
-        .from("projects")
-        .select("*")
-        .order("created_at", { ascending: false });
+      const [{ data: profileData }, { data: projectsData }] = await Promise.all([
+        supabase.from("profiles").select("plan").eq("id", user.id).maybeSingle(),
+        supabase.from("projects").select("*").order("created_at", { ascending: false }),
+      ]);
+      if (mounted) setPlan(normalizePlan(profileData?.plan));
 
       if (!projectsData) {
         if (mounted) {
