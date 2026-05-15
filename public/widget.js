@@ -158,17 +158,6 @@
         '<div id="rdrop-modal-actions">' +
         '<button class="rdrop-cancel" id="rdrop-cancel">Annuler</button>' +
         '<button class="rdrop-submit" id="rdrop-submit">Envoyer</button>' +
-        "</div></div>";
-      bg.innerHTML =
-        '<div id="rdrop-modal" onclick="event.stopPropagation()">' +
-        "<h3>Laisser un feedback</h3>" +
-        '<label>Votre prénom</label>' +
-        '<input id="rdrop-name" type="text" placeholder="Camille" />' +
-        '<label>Votre message</label>' +
-        '<textarea id="rdrop-msg" placeholder="Ce bouton pourrait être plus visible..."></textarea>' +
-        '<div id="rdrop-modal-actions">' +
-        '<button class="rdrop-cancel" id="rdrop-cancel">Annuler</button>' +
-        '<button class="rdrop-submit" id="rdrop-submit">Envoyer</button>' +
         "</div>" +
         (SHOW_BADGE ? '<div style="margin-top:12px;text-align:center;font-size:11px;color:#999;">Propulsé par <a href="https://reviewdrop.app" target="_blank" rel="noopener" style="color:#6366f1;text-decoration:none;font-weight:500;">ReviewDrop</a></div>' : '') +
         "</div>";
