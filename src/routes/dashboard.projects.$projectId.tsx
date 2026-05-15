@@ -551,10 +551,29 @@ function ProjectSettings({ project, onUpdate, plan }: { project: Project; onUpda
         <Input id="pname" value={name} onChange={(e) => setName(e.target.value)} className="mt-1" />
       </div>
       <div>
-        <Label htmlFor="pcolor">Couleur du widget</Label>
+        <div className="flex items-center justify-between">
+          <Label htmlFor="pcolor">Couleur du widget</Label>
+          {!limits.customBrandColor && (
+            <Link to="/dashboard/billing" className="text-xs text-primary hover:underline inline-flex items-center gap-1">
+              <Lock className="h-3 w-3" /> Réservé aux plans Pro et Max
+            </Link>
+          )}
+        </div>
         <div className="flex items-center gap-2 mt-1">
-          <Input id="pcolor" type="color" value={color} onChange={(e) => setColor(e.target.value)} className="w-16 h-10 p-1" />
-          <Input value={color} onChange={(e) => setColor(e.target.value)} className="flex-1" />
+          <Input
+            id="pcolor"
+            type="color"
+            value={limits.customBrandColor ? color : DEFAULT_BRAND_COLOR}
+            onChange={(e) => setColor(e.target.value)}
+            disabled={!limits.customBrandColor}
+            className="w-16 h-10 p-1 disabled:opacity-50"
+          />
+          <Input
+            value={limits.customBrandColor ? color : DEFAULT_BRAND_COLOR}
+            onChange={(e) => setColor(e.target.value)}
+            disabled={!limits.customBrandColor}
+            className="flex-1"
+          />
         </div>
       </div>
       <div className="flex items-center gap-2">
