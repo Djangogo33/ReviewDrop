@@ -81,20 +81,25 @@ function ProjectPage() {
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [plan, setPlan] = useState<PlanId>("free");
 
   useEffect(() => {
     if (!user) return;
     let mounted = true;
     (async () => {
-      const { data: p } = await supabase.from("projects").select("*").eq("id", projectId).single();
-      const { data: f } = await supabase
-        .from("feedbacks")
-        .select("*")
-        .eq("project_id", projectId)
-        .order("created_at", { ascending: false });
+      const [{ data: p }, { data: f }, { data: prof }] = await Promise.all([
+        supabase.from("projects").select("*").eq("id", projectId).single(),
+        supabase
+          .from("feedbacks")
+          .select("*")
+          .eq("project_id", projectId)
+          .order("created_at", { ascending: false }),
+        supabase.from("profiles").select("plan").eq("id", user.id).maybeSingle(),
+      ]);
       if (mounted) {
         setProject(p);
         setFeedbacks(f || []);
+        setPlan(normalizePlan(prof?.plan));
         setLoading(false);
       }
     })();
