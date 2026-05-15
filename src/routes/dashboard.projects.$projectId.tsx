@@ -489,7 +489,8 @@ function FeedbackDetail({
   );
 }
 
-function ProjectSettings({ project, onUpdate }: { project: Project; onUpdate: (p: Project) => void }) {
+function ProjectSettings({ project, onUpdate, plan }: { project: Project; onUpdate: (p: Project) => void; plan: PlanId }) {
+  const limits = getLimits(plan);
   const [name, setName] = useState(project.name);
   const [color, setColor] = useState(project.brand_color);
   const [active, setActive] = useState(project.is_active);
@@ -500,7 +501,12 @@ function ProjectSettings({ project, onUpdate }: { project: Project; onUpdate: (p
     setSaving(true);
     const { data, error } = await supabase
       .from("projects")
-      .update({ name, brand_color: color, is_active: active, notify_email: notify })
+      .update({
+        name,
+        brand_color: limits.customBrandColor ? color : DEFAULT_BRAND_COLOR,
+        is_active: active,
+        notify_email: notify,
+      })
       .eq("id", project.id)
       .select()
       .single();
