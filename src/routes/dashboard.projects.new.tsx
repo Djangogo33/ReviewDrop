@@ -38,16 +38,20 @@ function NewProjectPage() {
     }
     setLoading(true);
 
-    // Free plan limit: 3 active projects
+    // Plan limit on active projects
     const { data: profile } = await supabase.from("profiles").select("plan").eq("id", user.id).single();
-    if (profile?.plan === "free") {
+    const { getLimits, PLAN_LABEL, normalizePlan } = await import("@/lib/plans");
+    const limits = getLimits(profile?.plan);
+    if (limits.maxActiveProjects !== null) {
       const { count } = await supabase
         .from("projects")
         .select("*", { count: "exact", head: true })
         .eq("owner_id", user.id);
-      if ((count ?? 0) >= 3) {
+      if ((count ?? 0) >= limits.maxActiveProjects) {
         setLoading(false);
-        toast.error("Limite atteinte : 3 projets en plan Free. Passez Pro pour en créer plus.");
+        toast.error(
+          `Limite atteinte : ${limits.maxActiveProjects} projets en plan ${PLAN_LABEL[normalizePlan(profile?.plan)]}. Passez à un plan supérieur pour en créer plus.`,
+        );
         return;
       }
     }
