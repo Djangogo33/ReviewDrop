@@ -123,34 +123,57 @@ function Landing() {
       <section id="pricing" className="border-y border-border bg-muted/30 py-20">
         <div className="container mx-auto px-4">
           <h2 className="text-center text-3xl font-bold">Tarifs simples</h2>
-          <p className="mt-3 text-center text-muted-foreground">Commencez gratuitement, passez Pro quand vous êtes prêt.</p>
-          <div className="mx-auto mt-12 grid max-w-3xl gap-6 md:grid-cols-2">
-            <div className="rounded-lg border border-border bg-card p-6">
+          <p className="mt-3 text-center text-muted-foreground">Commencez gratuitement, montez en gamme quand vous êtes prêt.</p>
+          <div className="mx-auto mt-12 grid max-w-5xl gap-6 md:grid-cols-3">
+            {/* Free */}
+            <div className="rounded-lg border border-border bg-card p-6 flex flex-col">
               <h3 className="text-xl font-semibold">Free</h3>
               <p className="mt-1 text-sm text-muted-foreground">Pour tester et démarrer</p>
               <p className="mt-6 text-4xl font-bold">0€<span className="text-base font-normal text-muted-foreground">/mois</span></p>
-              <ul className="mt-6 space-y-2 text-sm">
-                <li className="flex gap-2"><Check className="h-4 w-4 text-primary" />3 projets actifs</li>
-                <li className="flex gap-2"><Check className="h-4 w-4 text-primary" />Feedbacks illimités</li>
-                <li className="flex gap-2"><Check className="h-4 w-4 text-primary" />Notifications email</li>
+              <ul className="mt-6 space-y-2 text-sm flex-1">
+                <li className="flex gap-2"><Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />3 projets actifs</li>
+                <li className="flex gap-2"><Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />Feedbacks illimités</li>
+                <li className="flex gap-2"><Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />Widget JS + mode maquette</li>
+                <li className="flex gap-2"><Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />Notifications email</li>
+                <li className="flex gap-2 text-muted-foreground"><Check className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />Badge « ReviewDrop » sur le widget</li>
               </ul>
               <Link to="/signup" className="mt-6 block">
                 <Button variant="outline" className="w-full">Commencer</Button>
               </Link>
             </div>
-            <div className="rounded-lg border-2 border-primary bg-card p-6 relative">
+
+            {/* Pro */}
+            <div className="rounded-lg border-2 border-primary bg-card p-6 relative flex flex-col">
               <div className="absolute -top-3 left-6 rounded-full bg-primary px-3 py-0.5 text-xs font-medium text-primary-foreground">Recommandé</div>
               <h3 className="text-xl font-semibold">Pro</h3>
               <p className="mt-1 text-sm text-muted-foreground">Pour les freelances actifs</p>
               <p className="mt-6 text-4xl font-bold">9€<span className="text-base font-normal text-muted-foreground">/mois</span></p>
-              <ul className="mt-6 space-y-2 text-sm">
-                <li className="flex gap-2"><Check className="h-4 w-4 text-primary" />Projets illimités</li>
-                <li className="flex gap-2"><Check className="h-4 w-4 text-primary" />Feedbacks illimités</li>
-                <li className="flex gap-2"><Check className="h-4 w-4 text-primary" />Personnalisation widget</li>
-                <li className="flex gap-2"><Check className="h-4 w-4 text-primary" />Support prioritaire</li>
+              <ul className="mt-6 space-y-2 text-sm flex-1">
+                <li className="flex gap-2"><Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />Projets illimités</li>
+                <li className="flex gap-2"><Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />Couleur du widget personnalisable</li>
+                <li className="flex gap-2"><Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />Export CSV des feedbacks</li>
+                <li className="flex gap-2"><Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />Support prioritaire</li>
+                <li className="flex gap-2 text-muted-foreground"><Check className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />Badge « ReviewDrop » sur le widget</li>
               </ul>
               <Link to="/signup" className="mt-6 block">
                 <Button className="w-full">Essayer Pro</Button>
+              </Link>
+            </div>
+
+            {/* Max */}
+            <div className="rounded-lg border border-border bg-card p-6 flex flex-col">
+              <h3 className="text-xl font-semibold">Max</h3>
+              <p className="mt-1 text-sm text-muted-foreground">Pour les agences</p>
+              <p className="mt-6 text-4xl font-bold">19€<span className="text-base font-normal text-muted-foreground">/mois</span></p>
+              <ul className="mt-6 space-y-2 text-sm flex-1">
+                <li className="flex gap-2"><Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />Tout du plan Pro</li>
+                <li className="flex gap-2"><Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />Suppression du badge ReviewDrop</li>
+                <li className="flex gap-2"><Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />Webhooks &amp; intégrations Slack</li>
+                <li className="flex gap-2"><Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />Domaine personnalisé du widget</li>
+                <li className="flex gap-2"><Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />Support dédié sous 24h</li>
+              </ul>
+              <Link to="/signup" className="mt-6 block">
+                <Button variant="outline" className="w-full">Choisir Max</Button>
               </Link>
             </div>
           </div>
