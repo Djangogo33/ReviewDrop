@@ -188,16 +188,24 @@ function ProjectPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={() => exportFeedbacksCsv(project, feedbacks)} disabled={feedbacks.length === 0}>
-            <Download className="h-4 w-4 mr-2" /> Export CSV
-          </Button>
+          {getLimits(plan).csvExport ? (
+            <Button variant="outline" size="sm" onClick={() => exportFeedbacksCsv(project, feedbacks)} disabled={feedbacks.length === 0}>
+              <Download className="h-4 w-4 mr-2" /> Export CSV
+            </Button>
+          ) : (
+            <Link to="/dashboard/billing">
+              <Button variant="outline" size="sm" title="Disponible sur Pro et Max">
+                <Lock className="h-4 w-4 mr-2" /> Export CSV
+              </Button>
+            </Link>
+          )}
           <Button variant="outline" size="sm" onClick={() => setShowSettings((s) => !s)}>
             <Settings className="h-4 w-4 mr-2" /> Paramètres
           </Button>
         </div>
       </div>
 
-      {showSettings && <ProjectSettings project={project} onUpdate={setProject} />}
+      {showSettings && <ProjectSettings project={project} onUpdate={setProject} plan={plan} />}
 
       {/* Integration card */}
       <div className="rounded-lg border border-border bg-card p-5 mb-6">
