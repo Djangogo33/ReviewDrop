@@ -37,6 +37,7 @@ function Landing() {
           </Link>
           <nav className="flex items-center gap-3">
             <a href="#features" className="hidden sm:inline text-sm text-muted-foreground hover:text-foreground">Fonctionnalités</a>
+            <Link to="/demo" className="hidden sm:inline text-sm text-muted-foreground hover:text-foreground">Démo</Link>
             <a href="#pricing" className="hidden sm:inline text-sm text-muted-foreground hover:text-foreground">Tarifs</a>
             {user ? (
               <Link to="/dashboard"><Button size="sm">Dashboard</Button></Link>
@@ -67,9 +68,9 @@ function Landing() {
           <Link to="/signup">
             <Button size="lg" className="w-full sm:w-auto">Commencer gratuitement</Button>
           </Link>
-          <a href="#how" className="text-sm text-muted-foreground hover:text-foreground">
-            Voir comment ça marche →
-          </a>
+          <Link to="/demo">
+            <Button size="lg" variant="outline" className="w-full sm:w-auto">Essayer la démo</Button>
+          </Link>
         </div>
         <p className="mt-4 text-xs text-muted-foreground">3 projets gratuits • Sans carte bancaire</p>
       </section>
