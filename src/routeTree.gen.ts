@@ -15,6 +15,7 @@ import { Route as DemoRouteImport } from './routes/demo'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as RTokenRouteImport } from './routes/r.$token'
+import { Route as DashboardReferralsRouteImport } from './routes/dashboard.referrals'
 import { Route as DashboardInstallRouteImport } from './routes/dashboard.install'
 import { Route as DashboardBillingRouteImport } from './routes/dashboard.billing'
 import { Route as DashboardAccountRouteImport } from './routes/dashboard.account'
@@ -51,6 +52,11 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
 const RTokenRoute = RTokenRouteImport.update({
   id: '/r/$token',
   path: '/r/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardReferralsRoute = DashboardReferralsRouteImport.update({
+  id: '/dashboard/referrals',
+  path: '/dashboard/referrals',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardInstallRoute = DashboardInstallRouteImport.update({
@@ -99,6 +105,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/account': typeof DashboardAccountRoute
   '/dashboard/billing': typeof DashboardBillingRoute
   '/dashboard/install': typeof DashboardInstallRoute
+  '/dashboard/referrals': typeof DashboardReferralsRoute
   '/r/$token': typeof RTokenRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/api/public/feedback': typeof ApiPublicFeedbackRoute
@@ -114,6 +121,7 @@ export interface FileRoutesByTo {
   '/dashboard/account': typeof DashboardAccountRoute
   '/dashboard/billing': typeof DashboardBillingRoute
   '/dashboard/install': typeof DashboardInstallRoute
+  '/dashboard/referrals': typeof DashboardReferralsRoute
   '/r/$token': typeof RTokenRoute
   '/dashboard': typeof DashboardIndexRoute
   '/api/public/feedback': typeof ApiPublicFeedbackRoute
@@ -130,6 +138,7 @@ export interface FileRoutesById {
   '/dashboard/account': typeof DashboardAccountRoute
   '/dashboard/billing': typeof DashboardBillingRoute
   '/dashboard/install': typeof DashboardInstallRoute
+  '/dashboard/referrals': typeof DashboardReferralsRoute
   '/r/$token': typeof RTokenRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/api/public/feedback': typeof ApiPublicFeedbackRoute
@@ -147,6 +156,7 @@ export interface FileRouteTypes {
     | '/dashboard/account'
     | '/dashboard/billing'
     | '/dashboard/install'
+    | '/dashboard/referrals'
     | '/r/$token'
     | '/dashboard/'
     | '/api/public/feedback'
@@ -162,6 +172,7 @@ export interface FileRouteTypes {
     | '/dashboard/account'
     | '/dashboard/billing'
     | '/dashboard/install'
+    | '/dashboard/referrals'
     | '/r/$token'
     | '/dashboard'
     | '/api/public/feedback'
@@ -177,6 +188,7 @@ export interface FileRouteTypes {
     | '/dashboard/account'
     | '/dashboard/billing'
     | '/dashboard/install'
+    | '/dashboard/referrals'
     | '/r/$token'
     | '/dashboard/'
     | '/api/public/feedback'
@@ -193,6 +205,7 @@ export interface RootRouteChildren {
   DashboardAccountRoute: typeof DashboardAccountRoute
   DashboardBillingRoute: typeof DashboardBillingRoute
   DashboardInstallRoute: typeof DashboardInstallRoute
+  DashboardReferralsRoute: typeof DashboardReferralsRoute
   RTokenRoute: typeof RTokenRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
   ApiPublicFeedbackRoute: typeof ApiPublicFeedbackRoute
@@ -243,6 +256,13 @@ declare module '@tanstack/react-router' {
       path: '/r/$token'
       fullPath: '/r/$token'
       preLoaderRoute: typeof RTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/referrals': {
+      id: '/dashboard/referrals'
+      path: '/dashboard/referrals'
+      fullPath: '/dashboard/referrals'
+      preLoaderRoute: typeof DashboardReferralsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard/install': {
@@ -305,6 +325,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardAccountRoute: DashboardAccountRoute,
   DashboardBillingRoute: DashboardBillingRoute,
   DashboardInstallRoute: DashboardInstallRoute,
+  DashboardReferralsRoute: DashboardReferralsRoute,
   RTokenRoute: RTokenRoute,
   DashboardIndexRoute: DashboardIndexRoute,
   ApiPublicFeedbackRoute: ApiPublicFeedbackRoute,

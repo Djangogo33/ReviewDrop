@@ -118,6 +118,8 @@ export type Database = {
           full_name: string | null
           id: string
           plan: string
+          referral_code: string | null
+          referred_by: string | null
           stripe_customer_id: string | null
           stripe_subscription_id: string | null
           updated_at: string
@@ -128,6 +130,8 @@ export type Database = {
           full_name?: string | null
           id: string
           plan?: string
+          referral_code?: string | null
+          referred_by?: string | null
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
           updated_at?: string
@@ -138,6 +142,8 @@ export type Database = {
           full_name?: string | null
           id?: string
           plan?: string
+          referral_code?: string | null
+          referred_by?: string | null
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
           updated_at?: string
@@ -186,12 +192,39 @@ export type Database = {
         }
         Relationships: []
       }
+      referrals: {
+        Row: {
+          confirmed_at: string | null
+          created_at: string
+          id: string
+          referred_id: string
+          referrer_id: string
+          status: string
+        }
+        Insert: {
+          confirmed_at?: string | null
+          created_at?: string
+          id?: string
+          referred_id: string
+          referrer_id: string
+          status?: string
+        }
+        Update: {
+          confirmed_at?: string | null
+          created_at?: string
+          id?: string
+          referred_id?: string
+          referrer_id?: string
+          status?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_referral_code: { Args: never; Returns: string }
     }
     Enums: {
       [_ in never]: never
