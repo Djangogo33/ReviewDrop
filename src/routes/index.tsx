@@ -37,6 +37,7 @@ function Landing() {
           </Link>
           <nav className="flex items-center gap-3">
             <a href="#features" className="hidden sm:inline text-sm text-muted-foreground hover:text-foreground">Fonctionnalités</a>
+            <Link to="/demo" className="hidden sm:inline text-sm text-muted-foreground hover:text-foreground">Démo</Link>
             <a href="#pricing" className="hidden sm:inline text-sm text-muted-foreground hover:text-foreground">Tarifs</a>
             {user ? (
               <Link to="/dashboard"><Button size="sm">Dashboard</Button></Link>
