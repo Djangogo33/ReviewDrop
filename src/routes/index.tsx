@@ -68,9 +68,9 @@ function Landing() {
           <Link to="/signup">
             <Button size="lg" className="w-full sm:w-auto">Commencer gratuitement</Button>
           </Link>
-          <a href="#how" className="text-sm text-muted-foreground hover:text-foreground">
-            Voir comment ça marche →
-          </a>
+          <Link to="/demo">
+            <Button size="lg" variant="outline" className="w-full sm:w-auto">Essayer la démo</Button>
+          </Link>
         </div>
         <p className="mt-4 text-xs text-muted-foreground">3 projets gratuits • Sans carte bancaire</p>
       </section>
