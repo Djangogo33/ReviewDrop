@@ -120,6 +120,8 @@ export type Database = {
           plan: string
           referral_code: string | null
           referred_by: string | null
+          signup_email_normalized: string | null
+          signup_ip_hash: string | null
           stripe_customer_id: string | null
           stripe_subscription_id: string | null
           updated_at: string
@@ -132,6 +134,8 @@ export type Database = {
           plan?: string
           referral_code?: string | null
           referred_by?: string | null
+          signup_email_normalized?: string | null
+          signup_ip_hash?: string | null
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
           updated_at?: string
@@ -144,6 +148,8 @@ export type Database = {
           plan?: string
           referral_code?: string | null
           referred_by?: string | null
+          signup_email_normalized?: string | null
+          signup_ip_hash?: string | null
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
           updated_at?: string
@@ -192,27 +198,72 @@ export type Database = {
         }
         Relationships: []
       }
+      referral_events: {
+        Row: {
+          created_at: string
+          email_normalized: string | null
+          event_type: string
+          id: string
+          ip_hash: string | null
+          metadata: Json
+          reason: string | null
+          referral_code: string | null
+          referred_id: string | null
+          referrer_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email_normalized?: string | null
+          event_type: string
+          id?: string
+          ip_hash?: string | null
+          metadata?: Json
+          reason?: string | null
+          referral_code?: string | null
+          referred_id?: string | null
+          referrer_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email_normalized?: string | null
+          event_type?: string
+          id?: string
+          ip_hash?: string | null
+          metadata?: Json
+          reason?: string | null
+          referral_code?: string | null
+          referred_id?: string | null
+          referrer_id?: string | null
+        }
+        Relationships: []
+      }
       referrals: {
         Row: {
+          blocked_reason: string | null
           confirmed_at: string | null
           created_at: string
           id: string
+          ip_hash: string | null
           referred_id: string
           referrer_id: string
           status: string
         }
         Insert: {
+          blocked_reason?: string | null
           confirmed_at?: string | null
           created_at?: string
           id?: string
+          ip_hash?: string | null
           referred_id: string
           referrer_id: string
           status?: string
         }
         Update: {
+          blocked_reason?: string | null
           confirmed_at?: string | null
           created_at?: string
           id?: string
+          ip_hash?: string | null
           referred_id?: string
           referrer_id?: string
           status?: string
@@ -225,6 +276,7 @@ export type Database = {
     }
     Functions: {
       generate_referral_code: { Args: never; Returns: string }
+      normalize_email: { Args: { _email: string }; Returns: string }
     }
     Enums: {
       [_ in never]: never
