@@ -26,6 +26,7 @@ function Signup() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { ref } = useSearch({ from: "/signup" });
+  const prepare = useServerFn(prepareSignup);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -38,6 +39,20 @@ function Signup() {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    // Anti-fraud: server-side IP rate-limit + signal capture
+    let ipHash: string | null = null;
+    try {
+      const prep = await prepare({ data: { email, referralCode: ref ?? null } });
+      if (!prep.ok) {
+        setLoading(false);
+        toast.error("Trop de tentatives d'inscription depuis votre réseau. Réessayez dans une heure.");
+        return;
+      }
+      ipHash = prep.ipHash;
+    } catch {
+      // If prepare fails for any reason, still allow signup (degraded mode)
+    }
+
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -46,6 +61,7 @@ function Signup() {
         data: {
           full_name: fullName,
           ...(ref ? { referral_code: ref.toUpperCase() } : {}),
+          ...(ipHash ? { signup_ip_hash: ipHash } : {}),
         },
       },
     });
