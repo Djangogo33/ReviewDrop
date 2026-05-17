@@ -6,7 +6,7 @@ import { RequireAuth } from "@/components/RequireAuth";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Gift, Copy, Check, Share2, Users, Sparkles } from "lucide-react";
+import { Gift, Copy, Check, Share2, Users, Sparkles, Shield, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/dashboard/referrals")({
