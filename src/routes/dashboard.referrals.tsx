@@ -26,6 +26,24 @@ type Referral = {
   status: string;
   created_at: string;
   confirmed_at: string | null;
+  blocked_reason?: string | null;
+};
+
+type ReferralEvent = {
+  id: string;
+  event_type: string;
+  reason: string | null;
+  created_at: string;
+  referral_code: string | null;
+};
+
+const REASON_LABELS: Record<string, string> = {
+  self_referral: "Auto-parrainage détecté",
+  duplicate_email: "Email déjà utilisé sur un autre compte",
+  ip_limit_per_referrer: "Trop de filleuls depuis la même IP",
+  referrer_daily_limit: "Limite quotidienne de parrainages atteinte",
+  unknown_code: "Code de parrainage inconnu",
+  ip_signup_rate_limit: "Trop d'inscriptions depuis votre réseau",
 };
 
 function ReferralsPage() {
