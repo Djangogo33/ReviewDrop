@@ -50,22 +50,30 @@ function ReferralsPage() {
   const { user } = useAuth();
   const [code, setCode] = useState<string | null>(null);
   const [referrals, setReferrals] = useState<Referral[]>([]);
+  const [events, setEvents] = useState<ReferralEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (!user) return;
     (async () => {
-      const [{ data: profile }, { data: refs }] = await Promise.all([
+      const [{ data: profile }, { data: refs }, { data: evts }] = await Promise.all([
         supabase.from("profiles").select("referral_code").eq("id", user.id).maybeSingle(),
         supabase
           .from("referrals")
-          .select("id, referred_id, status, created_at, confirmed_at")
+          .select("id, referred_id, status, created_at, confirmed_at, blocked_reason")
           .eq("referrer_id", user.id)
           .order("created_at", { ascending: false }),
+        supabase
+          .from("referral_events" as any)
+          .select("id, event_type, reason, created_at, referral_code")
+          .eq("referrer_id", user.id)
+          .order("created_at", { ascending: false })
+          .limit(20),
       ]);
       setCode((profile as any)?.referral_code ?? null);
       setReferrals((refs as Referral[]) ?? []);
+      setEvents((evts as ReferralEvent[]) ?? []);
       setLoading(false);
     })();
   }, [user]);
