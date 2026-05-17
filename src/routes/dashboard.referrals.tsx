@@ -196,17 +196,68 @@ function ReferralsPage() {
                     </div>
                   </div>
                 </div>
-                <span
-                  className={`text-xs font-medium px-2 py-1 rounded-full ${
-                    r.status === "confirmed"
-                      ? "bg-emerald-500/10 text-emerald-600"
-                      : "bg-amber-500/10 text-amber-600"
-                  }`}
-                >
-                  {r.status === "confirmed" ? "Confirmé" : "En attente"}
-                </span>
+                <div className="flex flex-col items-end gap-1">
+                  <span
+                    className={`text-xs font-medium px-2 py-1 rounded-full ${
+                      r.status === "confirmed"
+                        ? "bg-emerald-500/10 text-emerald-600"
+                        : r.status === "blocked"
+                        ? "bg-red-500/10 text-red-600"
+                        : "bg-amber-500/10 text-amber-600"
+                    }`}
+                  >
+                    {r.status === "confirmed" ? "Confirmé" : r.status === "blocked" ? "Bloqué" : "En attente"}
+                  </span>
+                  {r.blocked_reason && (
+                    <span className="text-[10px] text-muted-foreground">
+                      {REASON_LABELS[r.blocked_reason] ?? r.blocked_reason}
+                    </span>
+                  )}
+                </div>
               </li>
             ))}
+          </ul>
+        )}
+      </div>
+
+      {/* Anti-fraud activity log */}
+      <div className="mt-6 rounded-xl border border-border bg-card p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Shield className="h-4 w-4 text-muted-foreground" />
+          <h2 className="font-semibold">Journal d'activité</h2>
+        </div>
+        <p className="text-xs text-muted-foreground mb-4">
+          Les protections anti-fraude détectent les inscriptions multiples, l'auto-parrainage et les emails dupliqués.
+        </p>
+        {loading ? (
+          <div className="h-10 rounded-md bg-muted animate-pulse" />
+        ) : events.length === 0 ? (
+          <div className="text-center py-6 text-sm text-muted-foreground">Aucun événement récent.</div>
+        ) : (
+          <ul className="divide-y divide-border text-sm">
+            {events.map((e) => {
+              const isBlock = e.event_type === "referral_blocked" || e.event_type === "rate_limited";
+              return (
+                <li key={e.id} className="flex items-center justify-between py-2.5 gap-3">
+                  <div className="flex items-center gap-2 min-w-0">
+                    {isBlock ? (
+                      <AlertTriangle className="h-3.5 w-3.5 text-red-500 shrink-0" />
+                    ) : (
+                      <Check className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                    )}
+                    <span className="truncate">
+                      {e.event_type === "referral_credited" && "Filleul crédité"}
+                      {e.event_type === "referral_blocked" && `Bloqué — ${REASON_LABELS[e.reason ?? ""] ?? e.reason}`}
+                      {e.event_type === "rate_limited" && "Limite anti-spam atteinte"}
+                      {e.event_type === "signup_attempt" && "Tentative d'inscription"}
+                    </span>
+                  </div>
+                  <span className="text-xs text-muted-foreground shrink-0">
+                    {new Date(e.created_at).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" })}
+                  </span>
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>
