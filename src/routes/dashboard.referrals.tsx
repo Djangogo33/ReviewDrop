@@ -73,7 +73,7 @@ function ReferralsPage() {
       ]);
       setCode((profile as any)?.referral_code ?? null);
       setReferrals((refs as Referral[]) ?? []);
-      setEvents((evts as ReferralEvent[]) ?? []);
+      setEvents(((evts as unknown) as ReferralEvent[]) ?? []);
       setLoading(false);
     })();
   }, [user]);
