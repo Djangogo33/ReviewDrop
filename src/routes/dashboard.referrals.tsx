@@ -6,7 +6,7 @@ import { RequireAuth } from "@/components/RequireAuth";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Gift, Copy, Check, Share2, Users, Sparkles } from "lucide-react";
+import { Gift, Copy, Check, Share2, Users, Sparkles, Shield, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/dashboard/referrals")({
@@ -26,28 +26,54 @@ type Referral = {
   status: string;
   created_at: string;
   confirmed_at: string | null;
+  blocked_reason?: string | null;
+};
+
+type ReferralEvent = {
+  id: string;
+  event_type: string;
+  reason: string | null;
+  created_at: string;
+  referral_code: string | null;
+};
+
+const REASON_LABELS: Record<string, string> = {
+  self_referral: "Auto-parrainage détecté",
+  duplicate_email: "Email déjà utilisé sur un autre compte",
+  ip_limit_per_referrer: "Trop de filleuls depuis la même IP",
+  referrer_daily_limit: "Limite quotidienne de parrainages atteinte",
+  unknown_code: "Code de parrainage inconnu",
+  ip_signup_rate_limit: "Trop d'inscriptions depuis votre réseau",
 };
 
 function ReferralsPage() {
   const { user } = useAuth();
   const [code, setCode] = useState<string | null>(null);
   const [referrals, setReferrals] = useState<Referral[]>([]);
+  const [events, setEvents] = useState<ReferralEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (!user) return;
     (async () => {
-      const [{ data: profile }, { data: refs }] = await Promise.all([
+      const [{ data: profile }, { data: refs }, { data: evts }] = await Promise.all([
         supabase.from("profiles").select("referral_code").eq("id", user.id).maybeSingle(),
         supabase
           .from("referrals")
-          .select("id, referred_id, status, created_at, confirmed_at")
+          .select("id, referred_id, status, created_at, confirmed_at, blocked_reason")
           .eq("referrer_id", user.id)
           .order("created_at", { ascending: false }),
+        supabase
+          .from("referral_events" as any)
+          .select("id, event_type, reason, created_at, referral_code")
+          .eq("referrer_id", user.id)
+          .order("created_at", { ascending: false })
+          .limit(20),
       ]);
       setCode((profile as any)?.referral_code ?? null);
       setReferrals((refs as Referral[]) ?? []);
+      setEvents(((evts as unknown) as ReferralEvent[]) ?? []);
       setLoading(false);
     })();
   }, [user]);
@@ -170,17 +196,68 @@ function ReferralsPage() {
                     </div>
                   </div>
                 </div>
-                <span
-                  className={`text-xs font-medium px-2 py-1 rounded-full ${
-                    r.status === "confirmed"
-                      ? "bg-emerald-500/10 text-emerald-600"
-                      : "bg-amber-500/10 text-amber-600"
-                  }`}
-                >
-                  {r.status === "confirmed" ? "Confirmé" : "En attente"}
-                </span>
+                <div className="flex flex-col items-end gap-1">
+                  <span
+                    className={`text-xs font-medium px-2 py-1 rounded-full ${
+                      r.status === "confirmed"
+                        ? "bg-emerald-500/10 text-emerald-600"
+                        : r.status === "blocked"
+                        ? "bg-red-500/10 text-red-600"
+                        : "bg-amber-500/10 text-amber-600"
+                    }`}
+                  >
+                    {r.status === "confirmed" ? "Confirmé" : r.status === "blocked" ? "Bloqué" : "En attente"}
+                  </span>
+                  {r.blocked_reason && (
+                    <span className="text-[10px] text-muted-foreground">
+                      {REASON_LABELS[r.blocked_reason] ?? r.blocked_reason}
+                    </span>
+                  )}
+                </div>
               </li>
             ))}
+          </ul>
+        )}
+      </div>
+
+      {/* Anti-fraud activity log */}
+      <div className="mt-6 rounded-xl border border-border bg-card p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Shield className="h-4 w-4 text-muted-foreground" />
+          <h2 className="font-semibold">Journal d'activité</h2>
+        </div>
+        <p className="text-xs text-muted-foreground mb-4">
+          Les protections anti-fraude détectent les inscriptions multiples, l'auto-parrainage et les emails dupliqués.
+        </p>
+        {loading ? (
+          <div className="h-10 rounded-md bg-muted animate-pulse" />
+        ) : events.length === 0 ? (
+          <div className="text-center py-6 text-sm text-muted-foreground">Aucun événement récent.</div>
+        ) : (
+          <ul className="divide-y divide-border text-sm">
+            {events.map((e) => {
+              const isBlock = e.event_type === "referral_blocked" || e.event_type === "rate_limited";
+              return (
+                <li key={e.id} className="flex items-center justify-between py-2.5 gap-3">
+                  <div className="flex items-center gap-2 min-w-0">
+                    {isBlock ? (
+                      <AlertTriangle className="h-3.5 w-3.5 text-red-500 shrink-0" />
+                    ) : (
+                      <Check className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                    )}
+                    <span className="truncate">
+                      {e.event_type === "referral_credited" && "Filleul crédité"}
+                      {e.event_type === "referral_blocked" && `Bloqué — ${REASON_LABELS[e.reason ?? ""] ?? e.reason}`}
+                      {e.event_type === "rate_limited" && "Limite anti-spam atteinte"}
+                      {e.event_type === "signup_attempt" && "Tentative d'inscription"}
+                    </span>
+                  </div>
+                  <span className="text-xs text-muted-foreground shrink-0">
+                    {new Date(e.created_at).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" })}
+                  </span>
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>
