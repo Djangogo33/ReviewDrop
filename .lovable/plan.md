@@ -1,107 +1,68 @@
-# ReviewDrop — Plan de build MVP
+# Que développer ensuite ?
 
-## Vision
+Voici ce qui manque encore à ReviewDrop, classé par impact business. Choisis une piste et je l'implémente.
 
-Une app SaaS qui permet aux freelances web français de recueillir des feedbacks visuels ancrés sur leurs sites/maquettes en 30 secondes, sans friction email pour le client.
+## 1. Paiements & abonnements (impact: 🔥🔥🔥)
 
-## Architecture (3 composants)
+Aujourd'hui les plans Free/Pro/Max existent dans le code, mais **personne ne peut payer**. La page Tarifs n'a pas de bouton fonctionnel et `dashboard.billing.tsx` est un placeholder.
 
-```text
-┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
-│  Dashboard web  │     │   Widget JS      │     │  Notifications  │
-│  (freelance)    │◄────│  (injecté chez   │────►│  email + temps  │
-│                 │     │   le client)     │     │  réel           │
-└────────┬────────┘     └──────────────────┘     └────────┬────────┘
-         │                       │                         │
-         └───────────────────────┴─────────────────────────┘
-                          Lovable Cloud
-                  (DB + Auth + Realtime + Storage)
-```
+À faire :
 
-## Périmètre MVP
+- Activer Stripe (intégration Lovable Payments)
+- Créer les produits Pro (12€/mois) et Max (29€/mois) + équivalents annuels
+- Checkout depuis `/` et `/dashboard/billing`
+- Webhook qui met à jour `profiles.plan`, `stripe_customer_id`, `stripe_subscription_id`
+- Portail client (annulation, changement de plan, factures)
+- Crédit du parrainage : +1 mois Pro à chaque filleul confirmé (statut `confirmed` déclenché par la 1ʳᵉ facture payée)
 
-**Inclus**
-- Auth freelance (email + mot de passe + Google)
-- Création de projet → génération d'un lien magique unique par projet
-- Widget JS injectable (snippet `<script>` à coller, fonctionne sur sites statiques, WordPress, et SPA React/Vue avec re-positionnement au changement de route)
-- Mode "maquette" : upload d'une image PNG/JPG, le client commente directement dessus via le même widget servi en page hébergée
-- Commentaires ancrés à une position (x, y en %) avec capture du contexte (URL, viewport, sélecteur DOM)
-- Identification du client par lien magique projet (pas d'email requis, juste un prénom)
-- Dashboard de gestion : liste projets, liste feedbacks par projet, statut open/in-progress/closed
-- Notifications email au freelance à chaque nouveau feedback (Resend via Lovable AI)
-- Mises à jour temps réel dans le dashboard (Realtime Supabase)
-- Paiement Stripe : Free (3 projets actifs) / Pro 9€/mois (illimité)
-- Landing page FR avec pitch, démo, pricing, CTA signup
+## 2. Notifications email pour les feedbacks (impact: 🔥🔥)
 
-**Hors MVP (v2)**
-- Intégration Figma, app mobile, vidéo feedback, gestion d'équipe, Slack/webhooks, SSO
+Le champ `projects.notify_email` existe mais aucun email n'est envoyé. C'est pourtant LE moment de vérité du produit : le freelance doit savoir tout de suite qu'un client a laissé un retour.
 
-## Pages & routes
+À faire :
 
-- `/` — Landing FR (hero, démo, features, pricing, FAQ, CTA)
-- `/login`, `/signup` — Auth freelance
-- `/dashboard` — Liste des projets (carte par projet avec compteur feedbacks ouverts)
-- `/dashboard/projects/new` — Création projet (nom, type: site live ou maquette upload)
-- `/dashboard/projects/$id` — Détail projet : snippet à copier OU image maquette + liste feedbacks ancrés, filtres statut, vue détail commentaire
-- `/dashboard/projects/$id/settings` — Renommer, régénérer lien magique, supprimer
-- `/dashboard/billing` — Stripe customer portal + état abonnement
-- `/r/$projectToken` — Page hébergée pour mode maquette (le client voit l'image et commente)
-- `/widget.js` — Le script JS servi (route serveur)
-- `/api/public/feedback` — Endpoint public pour soumettre un feedback depuis le widget
-- `/api/public/widget-config/$projectToken` — Config projet pour le widget
+- Activer Lovable Emails (domaine d'envoi)
+- Email transactionnel à chaque nouveau feedback (auteur, message, screenshot, lien dashboard)
+- Digest quotidien optionnel pour les projets très actifs
+- Préférences par projet (instant / daily / off)
 
-## Le widget JS — comment ça marche
+## 3. Réponses aux feedbacks côté client (impact: 🔥🔥)
 
-1. Le freelance copie un snippet : `<script src="https://reviewdrop.app/widget.js" data-project="TOKEN" defer></script>`
-2. Au chargement, le widget :
-   - Fetch la config projet (couleurs, nom, statut actif)
-   - Affiche un bouton flottant "Laisser un feedback" en bas à droite
-   - Au clic : passe en mode "épingle" — curseur en croix
-   - Au clic suivant sur la page : pose un marqueur, ouvre un mini-formulaire (prénom + commentaire)
-   - Capture : URL, position (x%, y%), viewport, sélecteur CSS de l'élément cliqué, screenshot via `html2canvas`
-   - POST vers `/api/public/feedback` avec le token projet
-3. Pour les SPA : observe les changements `history.pushState` pour ré-ancrer correctement par URL
-4. Mode maquette : même UX mais sur la page `/r/$token` qui affiche l'image uploadée
+La table `feedback_replies` existe et les RLS sont en place, mais **il n'y a aucune UI**. Le freelance ne peut pas répondre à son client, et le client ne voit jamais les réponses.
 
-## Modèle de données
+À faire :
 
-- `profiles` (id → auth.users, email, full_name, plan: free|pro, stripe_customer_id, stripe_subscription_id)
-- `projects` (id, owner_id, name, type: live|mockup, public_token unique, mockup_image_path nullable, brand_color, is_active, created_at)
-- `feedbacks` (id, project_id, page_url, position_x, position_y, viewport_w, viewport_h, css_selector, screenshot_path, author_name, message, status: open|in_progress|closed, created_at)
-- `feedback_replies` (id, feedback_id, author_id nullable, author_name, message, created_at) — pour conversation interne freelance
+- UI de fil de discussion dans `dashboard.projects.$projectId.tsx`
+- Affichage des réponses dans le widget (tooltip d'un pin existant)
+- Notification email au client quand le freelance répond (via lien magique `/r/$token`)
+- Statuts `open` / `in_progress` / `resolved` activables d'un clic
 
-RLS : freelance ne voit que ses propres projets/feedbacks ; insertion publique de feedbacks autorisée uniquement avec un `public_token` valide (validation côté serveur).
+## 4. Page publique de partage des feedbacks (impact: 🔥)
 
-## Plan de livraison (compressé en 1 itération MVP)
+Permettre au freelance d'envoyer un lien type `/r/$token` à son client pour qu'il voie les retours sans créer de compte (la route `r.$token.tsx` existe déjà mais à vérifier).
 
-| Lot | Contenu |
-|-----|---------|
-| 1 | Auth + tables + dashboard vide + création projet + génération token |
-| 2 | Widget JS (bouton, mode épingle, formulaire, capture, POST) + endpoints publics |
-| 3 | Mode maquette (upload image + page `/r/$token` + même widget) |
-| 4 | Dashboard détail projet : overlay des pins sur preview, liste feedbacks, statuts, replies |
-| 5 | Realtime + notifications email (Resend) + polish UI |
-| 6 | Stripe : pricing page, checkout, webhook, gating sur nb projets, customer portal |
-| 7 | Landing page FR + screenshots démo |
+## 5. Export CSV + Webhooks (plans Pro/Max) (impact: 🔥)
 
-À l'issue de ce plan tu auras un produit testable de bout en bout. Je recommande de livrer les lots 1→4 dans une première passe (cœur du produit) puis lots 5→7 en passes courtes successives pour pouvoir valider/itérer entre chaque.
+Promis dans `plans.ts` (`csvExport`, `webhooks`) mais pas implémenté. Sans ça, les avantages Pro/Max ne sont pas tenus.
 
-## Détails techniques
+## 6. Onboarding & première install (impact: 🔥)
 
-- Stack Lovable native : TanStack Start + Lovable Cloud (Supabase géré)
-- Widget servi en pur Vanilla JS via une route serveur `/widget.js` qui retourne le bundle avec `Content-Type: application/javascript` et CORS `*` ; bundle pré-buildé dans `public/widget.js` pour éviter une compilation à chaque request
-- `html2canvas` pour le screenshot côté client (chargé dynamiquement par le widget pour ne pas bloquer le boot)
-- Tracking SPA via patch de `history.pushState` / `popstate`
-- Endpoint public `/api/public/feedback` : validation Zod stricte, vérification du `public_token`, rate limiting basique par IP+token
-- Storage bucket public `mockups` pour les images maquettes, bucket public `screenshots` pour les captures
-- Notifications email via Resend (clé à fournir en secret)
-- Stripe via l'intégration native Lovable (Step recommend → enable → produits → checkout → webhook)
-- Realtime Supabase sur la table `feedbacks` filtrée par `project_id` pour rafraîchir le dashboard
-- Sécurité : RLS strictes, jamais de service role côté client, signature webhook Stripe vérifiée, le `public_token` ne donne accès qu'à l'INSERT de feedback (pas de SELECT)
-- i18n : tout en français (UI, emails, landing) — pas de système i18n complet pour le MVP
+Aujourd'hui un nouveau user atterrit sur un dashboard vide. À ajouter :
 
-## À confirmer après approbation
+- Wizard 3 étapes après signup (nom du 1ᵉʳ projet → snippet à coller → essayer)
+- État vide guidé sur `/dashboard`
+- Checklist de progression ("Premier feedback reçu", "Snippet installé", etc.)
 
-- Nom définitif (ReviewDrop ou autre — je pars sur ReviewDrop par défaut)
-- Logo / palette : je propose un design moderne minimal (bleu indigo + blanc, typographie Inter) — ajustable
-- Domaine de prod (pour le snippet du widget) — on utilise le domaine Lovable au début
+---
+
+## Ma recommandation
+
+**Commencer par #1 (Paiements)**. Tout le reste (limites de plan, parrainage, badge "Powered by") est déjà câblé en attente d'un vrai plan payant. Sans monétisation, le parrainage que tu viens de mettre en place ne crédite rien et l'offre Max n'a pas de réalité commerciale.
+
+Ensuite #2 (Emails) qui transforme le produit d'un "outil qu'on consulte" en "outil qui te prévient" — c'est ce qui fait revenir les freelances dans le dashboard.
+
+Dis-moi laquelle tu veux et je lance.
+
+&nbsp;
+
+*Pour l'instant, ne rien activer option payante mais faire en sorte qu'elle soient prêtes à implémenter.*
