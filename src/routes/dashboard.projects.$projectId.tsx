@@ -616,3 +616,88 @@ function ProjectSettings({ project, onUpdate, plan }: { project: Project; onUpda
     </div>
   );
 }
+
+function ProjectPageSkeleton() {
+  return (
+    <div className="container mx-auto p-4 sm:p-6 max-w-7xl">
+      <Skeleton className="h-4 w-32 mb-4" />
+      <Skeleton className="h-8 w-64 mb-2" />
+      <Skeleton className="h-4 w-40 mb-6" />
+      <Skeleton className="h-24 w-full mb-6 rounded-lg" />
+      <div className="grid lg:grid-cols-[1fr_360px] gap-6">
+        <Skeleton className="h-80 w-full rounded-lg" />
+        <div className="space-y-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} className="h-24 w-full rounded-lg" />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function EmptyFeedbacks({
+  isLive,
+  snippet,
+  reviewUrl,
+  copied,
+  onCopy,
+}: {
+  isLive: boolean;
+  snippet: string;
+  reviewUrl: string;
+  copied: boolean;
+  onCopy: () => void;
+}) {
+  const valueToCopy = isLive ? snippet : reviewUrl;
+  return (
+    <div className="rounded-2xl border-2 border-dashed border-primary/30 bg-gradient-to-br from-primary/5 to-transparent p-8">
+      <div className="text-center mb-6">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
+          <Inbox className="h-8 w-8 text-primary" />
+        </div>
+        <h2 className="mt-4 text-xl font-bold">En attente de feedbacks</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          {isLive
+            ? "Installez le snippet sur votre site pour commencer à recevoir des retours."
+            : "Partagez le lien à votre client pour qu'il puisse commenter la maquette."}
+        </p>
+      </div>
+
+      <div className="rounded-lg border border-border bg-card p-4 mb-6">
+        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+          {isLive ? "Votre snippet" : "Votre lien"}
+        </p>
+        <code className="block text-sm bg-muted p-3 rounded-md overflow-x-auto whitespace-nowrap font-mono">
+          {valueToCopy}
+        </code>
+        <Button onClick={onCopy} className="w-full mt-3" size="lg">
+          {copied ? (
+            <>
+              <Check className="h-4 w-4 mr-2" /> Copié !
+            </>
+          ) : (
+            <>
+              <Copy className="h-4 w-4 mr-2" /> Copier le {isLive ? "snippet" : "lien"}
+            </>
+          )}
+        </Button>
+      </div>
+
+      <ol className="grid gap-3 sm:grid-cols-3 text-sm">
+        {[
+          isLive ? "Copiez le snippet" : "Copiez le lien",
+          isLive ? "Collez-le dans votre site" : "Envoyez-le à votre client",
+          "Partagez le lien à votre client",
+        ].slice(0, isLive ? 3 : 2).concat(isLive ? [] : ["Recevez ses feedbacks ici"]).map((label, i) => (
+          <li key={i} className="rounded-lg border border-border bg-card p-3 flex items-start gap-2">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+              {i + 1}
+            </span>
+            <span className="text-foreground">{label}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
