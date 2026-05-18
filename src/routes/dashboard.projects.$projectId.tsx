@@ -161,13 +161,22 @@ function ProjectPage() {
   const widgetUrl = typeof window !== "undefined" ? `${window.location.origin}/widget.js` : "/widget.js";
   const snippet = project ? `<script src="${widgetUrl}" data-project="${project.public_token}" defer></script>` : "";
 
-  const copySnippet = () => {
-    navigator.clipboard.writeText(snippet);
+  const copySnippet = (text?: string) => {
+    navigator.clipboard.writeText(text ?? snippet);
     setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
+    setTimeout(() => setCopied(false), 2000);
   };
 
-  if (loading) return <div className="p-6 text-center text-muted-foreground">Chargement...</div>;
+  const openFeedback = async (id: string) => {
+    setSelectedId(id);
+    const target = feedbacks.find((f) => f.id === id);
+    if (target && !target.is_read) {
+      setFeedbacks((prev) => prev.map((x) => (x.id === id ? { ...x, is_read: true } : x)));
+      await supabase.from("feedbacks").update({ is_read: true }).eq("id", id);
+    }
+  };
+
+  if (loading) return <ProjectPageSkeleton />;
   if (!project) return <div className="p-6">Projet introuvable.</div>;
 
   const mockupUrl = project.mockup_image_path
