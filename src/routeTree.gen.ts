@@ -16,11 +16,15 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as RTokenRouteImport } from './routes/r.$token'
 import { Route as DashboardReferralsRouteImport } from './routes/dashboard.referrals'
+import { Route as DashboardRedeemRouteImport } from './routes/dashboard.redeem'
 import { Route as DashboardInstallRouteImport } from './routes/dashboard.install'
 import { Route as DashboardBillingRouteImport } from './routes/dashboard.billing'
+import { Route as DashboardAdminRouteImport } from './routes/dashboard.admin'
 import { Route as DashboardAccountRouteImport } from './routes/dashboard.account'
 import { Route as DashboardProjectsNewRouteImport } from './routes/dashboard.projects.new'
 import { Route as DashboardProjectsProjectIdRouteImport } from './routes/dashboard.projects.$projectId'
+import { Route as DashboardAdminUsersRouteImport } from './routes/dashboard.admin.users'
+import { Route as DashboardAdminCodesRouteImport } from './routes/dashboard.admin.codes'
 import { Route as ApiPublicFeedbackRouteImport } from './routes/api.public.feedback'
 import { Route as ApiPublicWidgetConfigTokenRouteImport } from './routes/api.public.widget-config.$token'
 
@@ -59,6 +63,11 @@ const DashboardReferralsRoute = DashboardReferralsRouteImport.update({
   path: '/dashboard/referrals',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardRedeemRoute = DashboardRedeemRouteImport.update({
+  id: '/dashboard/redeem',
+  path: '/dashboard/redeem',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardInstallRoute = DashboardInstallRouteImport.update({
   id: '/dashboard/install',
   path: '/dashboard/install',
@@ -67,6 +76,11 @@ const DashboardInstallRoute = DashboardInstallRouteImport.update({
 const DashboardBillingRoute = DashboardBillingRouteImport.update({
   id: '/dashboard/billing',
   path: '/dashboard/billing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardAdminRoute = DashboardAdminRouteImport.update({
+  id: '/dashboard/admin',
+  path: '/dashboard/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardAccountRoute = DashboardAccountRouteImport.update({
@@ -85,6 +99,16 @@ const DashboardProjectsProjectIdRoute =
     path: '/dashboard/projects/$projectId',
     getParentRoute: () => rootRouteImport,
   } as any)
+const DashboardAdminUsersRoute = DashboardAdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => DashboardAdminRoute,
+} as any)
+const DashboardAdminCodesRoute = DashboardAdminCodesRouteImport.update({
+  id: '/codes',
+  path: '/codes',
+  getParentRoute: () => DashboardAdminRoute,
+} as any)
 const ApiPublicFeedbackRoute = ApiPublicFeedbackRouteImport.update({
   id: '/api/public/feedback',
   path: '/api/public/feedback',
@@ -103,12 +127,16 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/dashboard/account': typeof DashboardAccountRoute
+  '/dashboard/admin': typeof DashboardAdminRouteWithChildren
   '/dashboard/billing': typeof DashboardBillingRoute
   '/dashboard/install': typeof DashboardInstallRoute
+  '/dashboard/redeem': typeof DashboardRedeemRoute
   '/dashboard/referrals': typeof DashboardReferralsRoute
   '/r/$token': typeof RTokenRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/api/public/feedback': typeof ApiPublicFeedbackRoute
+  '/dashboard/admin/codes': typeof DashboardAdminCodesRoute
+  '/dashboard/admin/users': typeof DashboardAdminUsersRoute
   '/dashboard/projects/$projectId': typeof DashboardProjectsProjectIdRoute
   '/dashboard/projects/new': typeof DashboardProjectsNewRoute
   '/api/public/widget-config/$token': typeof ApiPublicWidgetConfigTokenRoute
@@ -119,12 +147,16 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/dashboard/account': typeof DashboardAccountRoute
+  '/dashboard/admin': typeof DashboardAdminRouteWithChildren
   '/dashboard/billing': typeof DashboardBillingRoute
   '/dashboard/install': typeof DashboardInstallRoute
+  '/dashboard/redeem': typeof DashboardRedeemRoute
   '/dashboard/referrals': typeof DashboardReferralsRoute
   '/r/$token': typeof RTokenRoute
   '/dashboard': typeof DashboardIndexRoute
   '/api/public/feedback': typeof ApiPublicFeedbackRoute
+  '/dashboard/admin/codes': typeof DashboardAdminCodesRoute
+  '/dashboard/admin/users': typeof DashboardAdminUsersRoute
   '/dashboard/projects/$projectId': typeof DashboardProjectsProjectIdRoute
   '/dashboard/projects/new': typeof DashboardProjectsNewRoute
   '/api/public/widget-config/$token': typeof ApiPublicWidgetConfigTokenRoute
@@ -136,12 +168,16 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/dashboard/account': typeof DashboardAccountRoute
+  '/dashboard/admin': typeof DashboardAdminRouteWithChildren
   '/dashboard/billing': typeof DashboardBillingRoute
   '/dashboard/install': typeof DashboardInstallRoute
+  '/dashboard/redeem': typeof DashboardRedeemRoute
   '/dashboard/referrals': typeof DashboardReferralsRoute
   '/r/$token': typeof RTokenRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/api/public/feedback': typeof ApiPublicFeedbackRoute
+  '/dashboard/admin/codes': typeof DashboardAdminCodesRoute
+  '/dashboard/admin/users': typeof DashboardAdminUsersRoute
   '/dashboard/projects/$projectId': typeof DashboardProjectsProjectIdRoute
   '/dashboard/projects/new': typeof DashboardProjectsNewRoute
   '/api/public/widget-config/$token': typeof ApiPublicWidgetConfigTokenRoute
@@ -154,12 +190,16 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/dashboard/account'
+    | '/dashboard/admin'
     | '/dashboard/billing'
     | '/dashboard/install'
+    | '/dashboard/redeem'
     | '/dashboard/referrals'
     | '/r/$token'
     | '/dashboard/'
     | '/api/public/feedback'
+    | '/dashboard/admin/codes'
+    | '/dashboard/admin/users'
     | '/dashboard/projects/$projectId'
     | '/dashboard/projects/new'
     | '/api/public/widget-config/$token'
@@ -170,12 +210,16 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/dashboard/account'
+    | '/dashboard/admin'
     | '/dashboard/billing'
     | '/dashboard/install'
+    | '/dashboard/redeem'
     | '/dashboard/referrals'
     | '/r/$token'
     | '/dashboard'
     | '/api/public/feedback'
+    | '/dashboard/admin/codes'
+    | '/dashboard/admin/users'
     | '/dashboard/projects/$projectId'
     | '/dashboard/projects/new'
     | '/api/public/widget-config/$token'
@@ -186,12 +230,16 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/dashboard/account'
+    | '/dashboard/admin'
     | '/dashboard/billing'
     | '/dashboard/install'
+    | '/dashboard/redeem'
     | '/dashboard/referrals'
     | '/r/$token'
     | '/dashboard/'
     | '/api/public/feedback'
+    | '/dashboard/admin/codes'
+    | '/dashboard/admin/users'
     | '/dashboard/projects/$projectId'
     | '/dashboard/projects/new'
     | '/api/public/widget-config/$token'
@@ -203,8 +251,10 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
   DashboardAccountRoute: typeof DashboardAccountRoute
+  DashboardAdminRoute: typeof DashboardAdminRouteWithChildren
   DashboardBillingRoute: typeof DashboardBillingRoute
   DashboardInstallRoute: typeof DashboardInstallRoute
+  DashboardRedeemRoute: typeof DashboardRedeemRoute
   DashboardReferralsRoute: typeof DashboardReferralsRoute
   RTokenRoute: typeof RTokenRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
@@ -265,6 +315,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardReferralsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/redeem': {
+      id: '/dashboard/redeem'
+      path: '/dashboard/redeem'
+      fullPath: '/dashboard/redeem'
+      preLoaderRoute: typeof DashboardRedeemRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard/install': {
       id: '/dashboard/install'
       path: '/dashboard/install'
@@ -277,6 +334,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard/billing'
       fullPath: '/dashboard/billing'
       preLoaderRoute: typeof DashboardBillingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/admin': {
+      id: '/dashboard/admin'
+      path: '/dashboard/admin'
+      fullPath: '/dashboard/admin'
+      preLoaderRoute: typeof DashboardAdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard/account': {
@@ -300,6 +364,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardProjectsProjectIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/admin/users': {
+      id: '/dashboard/admin/users'
+      path: '/users'
+      fullPath: '/dashboard/admin/users'
+      preLoaderRoute: typeof DashboardAdminUsersRouteImport
+      parentRoute: typeof DashboardAdminRoute
+    }
+    '/dashboard/admin/codes': {
+      id: '/dashboard/admin/codes'
+      path: '/codes'
+      fullPath: '/dashboard/admin/codes'
+      preLoaderRoute: typeof DashboardAdminCodesRouteImport
+      parentRoute: typeof DashboardAdminRoute
+    }
     '/api/public/feedback': {
       id: '/api/public/feedback'
       path: '/api/public/feedback'
@@ -317,14 +395,30 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface DashboardAdminRouteChildren {
+  DashboardAdminCodesRoute: typeof DashboardAdminCodesRoute
+  DashboardAdminUsersRoute: typeof DashboardAdminUsersRoute
+}
+
+const DashboardAdminRouteChildren: DashboardAdminRouteChildren = {
+  DashboardAdminCodesRoute: DashboardAdminCodesRoute,
+  DashboardAdminUsersRoute: DashboardAdminUsersRoute,
+}
+
+const DashboardAdminRouteWithChildren = DashboardAdminRoute._addFileChildren(
+  DashboardAdminRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DemoRoute: DemoRoute,
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
   DashboardAccountRoute: DashboardAccountRoute,
+  DashboardAdminRoute: DashboardAdminRouteWithChildren,
   DashboardBillingRoute: DashboardBillingRoute,
   DashboardInstallRoute: DashboardInstallRoute,
+  DashboardRedeemRoute: DashboardRedeemRoute,
   DashboardReferralsRoute: DashboardReferralsRoute,
   RTokenRoute: RTokenRoute,
   DashboardIndexRoute: DashboardIndexRoute,

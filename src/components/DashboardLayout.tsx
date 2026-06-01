@@ -1,11 +1,13 @@
 import { Link, useNavigate, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth-context";
+import { useIsAdmin } from "@/lib/use-is-admin";
 import { Button } from "@/components/ui/button";
-import { MessageSquarePlus, LayoutDashboard, CreditCard, LogOut, User, Code2, Gift } from "lucide-react";
+import { MessageSquarePlus, LayoutDashboard, CreditCard, LogOut, User, Code2, Gift, Ticket, ShieldCheck } from "lucide-react";
 import { ReactNode } from "react";
 
 export function DashboardLayout({ children }: { children: ReactNode }) {
   const { user, signOut } = useAuth();
+  const { isAdmin } = useIsAdmin();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -18,8 +20,10 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
     { to: "/dashboard", label: "Projets", icon: LayoutDashboard },
     { to: "/dashboard/install", label: "Installer le widget", icon: Code2 },
     { to: "/dashboard/referrals", label: "Parrainage", icon: Gift },
+    { to: "/dashboard/redeem", label: "Activer un code", icon: Ticket },
     { to: "/dashboard/account", label: "Mon compte", icon: User },
     { to: "/dashboard/billing", label: "Facturation", icon: CreditCard },
+    ...(isAdmin ? [{ to: "/dashboard/admin/users", label: "Admin", icon: ShieldCheck } as const] : []),
   ] as const;
 
   return (
@@ -34,7 +38,10 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
         </div>
         <nav className="flex-1 space-y-1 p-3">
           {navItems.map(({ to, label, icon: Icon }) => {
-            const active = location.pathname === to || (to === "/dashboard" && location.pathname.startsWith("/dashboard/projects"));
+            const active =
+              location.pathname === to ||
+              (to === "/dashboard" && location.pathname.startsWith("/dashboard/projects")) ||
+              (to === "/dashboard/admin/users" && location.pathname.startsWith("/dashboard/admin"));
             return (
               <Link
                 key={to}
