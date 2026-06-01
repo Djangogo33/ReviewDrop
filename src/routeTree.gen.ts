@@ -18,6 +18,7 @@ import { Route as RTokenRouteImport } from './routes/r.$token'
 import { Route as DashboardReferralsRouteImport } from './routes/dashboard.referrals'
 import { Route as DashboardInstallRouteImport } from './routes/dashboard.install'
 import { Route as DashboardBillingRouteImport } from './routes/dashboard.billing'
+import { Route as DashboardAdminRouteImport } from './routes/dashboard.admin'
 import { Route as DashboardAccountRouteImport } from './routes/dashboard.account'
 import { Route as DashboardProjectsNewRouteImport } from './routes/dashboard.projects.new'
 import { Route as DashboardProjectsProjectIdRouteImport } from './routes/dashboard.projects.$projectId'
@@ -69,6 +70,11 @@ const DashboardBillingRoute = DashboardBillingRouteImport.update({
   path: '/dashboard/billing',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardAdminRoute = DashboardAdminRouteImport.update({
+  id: '/dashboard/admin',
+  path: '/dashboard/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardAccountRoute = DashboardAccountRouteImport.update({
   id: '/dashboard/account',
   path: '/dashboard/account',
@@ -103,6 +109,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/dashboard/account': typeof DashboardAccountRoute
+  '/dashboard/admin': typeof DashboardAdminRoute
   '/dashboard/billing': typeof DashboardBillingRoute
   '/dashboard/install': typeof DashboardInstallRoute
   '/dashboard/referrals': typeof DashboardReferralsRoute
@@ -119,6 +126,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/dashboard/account': typeof DashboardAccountRoute
+  '/dashboard/admin': typeof DashboardAdminRoute
   '/dashboard/billing': typeof DashboardBillingRoute
   '/dashboard/install': typeof DashboardInstallRoute
   '/dashboard/referrals': typeof DashboardReferralsRoute
@@ -136,6 +144,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/dashboard/account': typeof DashboardAccountRoute
+  '/dashboard/admin': typeof DashboardAdminRoute
   '/dashboard/billing': typeof DashboardBillingRoute
   '/dashboard/install': typeof DashboardInstallRoute
   '/dashboard/referrals': typeof DashboardReferralsRoute
@@ -154,6 +163,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/dashboard/account'
+    | '/dashboard/admin'
     | '/dashboard/billing'
     | '/dashboard/install'
     | '/dashboard/referrals'
@@ -170,6 +180,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/dashboard/account'
+    | '/dashboard/admin'
     | '/dashboard/billing'
     | '/dashboard/install'
     | '/dashboard/referrals'
@@ -186,6 +197,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/dashboard/account'
+    | '/dashboard/admin'
     | '/dashboard/billing'
     | '/dashboard/install'
     | '/dashboard/referrals'
@@ -203,6 +215,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
   DashboardAccountRoute: typeof DashboardAccountRoute
+  DashboardAdminRoute: typeof DashboardAdminRoute
   DashboardBillingRoute: typeof DashboardBillingRoute
   DashboardInstallRoute: typeof DashboardInstallRoute
   DashboardReferralsRoute: typeof DashboardReferralsRoute
@@ -279,6 +292,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardBillingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/admin': {
+      id: '/dashboard/admin'
+      path: '/dashboard/admin'
+      fullPath: '/dashboard/admin'
+      preLoaderRoute: typeof DashboardAdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard/account': {
       id: '/dashboard/account'
       path: '/dashboard/account'
@@ -323,6 +343,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
   DashboardAccountRoute: DashboardAccountRoute,
+  DashboardAdminRoute: DashboardAdminRoute,
   DashboardBillingRoute: DashboardBillingRoute,
   DashboardInstallRoute: DashboardInstallRoute,
   DashboardReferralsRoute: DashboardReferralsRoute,
@@ -336,3 +357,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
