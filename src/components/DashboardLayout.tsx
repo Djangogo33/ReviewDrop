@@ -38,7 +38,10 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
         </div>
         <nav className="flex-1 space-y-1 p-3">
           {navItems.map(({ to, label, icon: Icon }) => {
-            const active = location.pathname === to || (to === "/dashboard" && location.pathname.startsWith("/dashboard/projects"));
+            const active =
+              location.pathname === to ||
+              (to === "/dashboard" && location.pathname.startsWith("/dashboard/projects")) ||
+              (to === "/dashboard/admin/users" && location.pathname.startsWith("/dashboard/admin"));
             return (
               <Link
                 key={to}
