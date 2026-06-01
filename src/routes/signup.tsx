@@ -90,6 +90,16 @@ function Signup() {
     if (error) toast.error(error.message);
   };
 
+  const handleApple = async () => {
+    if (ref && typeof window !== "undefined") {
+      localStorage.setItem("reviewdrop_pending_ref", ref.toUpperCase());
+    }
+    const result = await lovable.auth.signInWithOAuth("apple", {
+      redirect_uri: `${window.location.origin}/dashboard`,
+    });
+    if (result.error) toast.error(result.error.message);
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted/30 px-4">
       <div className="w-full max-w-md">
