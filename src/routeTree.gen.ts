@@ -23,6 +23,7 @@ import { Route as DashboardAccountRouteImport } from './routes/dashboard.account
 import { Route as DashboardProjectsNewRouteImport } from './routes/dashboard.projects.new'
 import { Route as DashboardProjectsProjectIdRouteImport } from './routes/dashboard.projects.$projectId'
 import { Route as DashboardAdminUsersRouteImport } from './routes/dashboard.admin.users'
+import { Route as DashboardAdminCodesRouteImport } from './routes/dashboard.admin.codes'
 import { Route as ApiPublicFeedbackRouteImport } from './routes/api.public.feedback'
 import { Route as ApiPublicWidgetConfigTokenRouteImport } from './routes/api.public.widget-config.$token'
 
@@ -97,6 +98,11 @@ const DashboardAdminUsersRoute = DashboardAdminUsersRouteImport.update({
   path: '/users',
   getParentRoute: () => DashboardAdminRoute,
 } as any)
+const DashboardAdminCodesRoute = DashboardAdminCodesRouteImport.update({
+  id: '/codes',
+  path: '/codes',
+  getParentRoute: () => DashboardAdminRoute,
+} as any)
 const ApiPublicFeedbackRoute = ApiPublicFeedbackRouteImport.update({
   id: '/api/public/feedback',
   path: '/api/public/feedback',
@@ -122,6 +128,7 @@ export interface FileRoutesByFullPath {
   '/r/$token': typeof RTokenRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/api/public/feedback': typeof ApiPublicFeedbackRoute
+  '/dashboard/admin/codes': typeof DashboardAdminCodesRoute
   '/dashboard/admin/users': typeof DashboardAdminUsersRoute
   '/dashboard/projects/$projectId': typeof DashboardProjectsProjectIdRoute
   '/dashboard/projects/new': typeof DashboardProjectsNewRoute
@@ -140,6 +147,7 @@ export interface FileRoutesByTo {
   '/r/$token': typeof RTokenRoute
   '/dashboard': typeof DashboardIndexRoute
   '/api/public/feedback': typeof ApiPublicFeedbackRoute
+  '/dashboard/admin/codes': typeof DashboardAdminCodesRoute
   '/dashboard/admin/users': typeof DashboardAdminUsersRoute
   '/dashboard/projects/$projectId': typeof DashboardProjectsProjectIdRoute
   '/dashboard/projects/new': typeof DashboardProjectsNewRoute
@@ -159,6 +167,7 @@ export interface FileRoutesById {
   '/r/$token': typeof RTokenRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/api/public/feedback': typeof ApiPublicFeedbackRoute
+  '/dashboard/admin/codes': typeof DashboardAdminCodesRoute
   '/dashboard/admin/users': typeof DashboardAdminUsersRoute
   '/dashboard/projects/$projectId': typeof DashboardProjectsProjectIdRoute
   '/dashboard/projects/new': typeof DashboardProjectsNewRoute
@@ -179,6 +188,7 @@ export interface FileRouteTypes {
     | '/r/$token'
     | '/dashboard/'
     | '/api/public/feedback'
+    | '/dashboard/admin/codes'
     | '/dashboard/admin/users'
     | '/dashboard/projects/$projectId'
     | '/dashboard/projects/new'
@@ -197,6 +207,7 @@ export interface FileRouteTypes {
     | '/r/$token'
     | '/dashboard'
     | '/api/public/feedback'
+    | '/dashboard/admin/codes'
     | '/dashboard/admin/users'
     | '/dashboard/projects/$projectId'
     | '/dashboard/projects/new'
@@ -215,6 +226,7 @@ export interface FileRouteTypes {
     | '/r/$token'
     | '/dashboard/'
     | '/api/public/feedback'
+    | '/dashboard/admin/codes'
     | '/dashboard/admin/users'
     | '/dashboard/projects/$projectId'
     | '/dashboard/projects/new'
@@ -339,6 +351,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAdminUsersRouteImport
       parentRoute: typeof DashboardAdminRoute
     }
+    '/dashboard/admin/codes': {
+      id: '/dashboard/admin/codes'
+      path: '/codes'
+      fullPath: '/dashboard/admin/codes'
+      preLoaderRoute: typeof DashboardAdminCodesRouteImport
+      parentRoute: typeof DashboardAdminRoute
+    }
     '/api/public/feedback': {
       id: '/api/public/feedback'
       path: '/api/public/feedback'
@@ -357,10 +376,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface DashboardAdminRouteChildren {
+  DashboardAdminCodesRoute: typeof DashboardAdminCodesRoute
   DashboardAdminUsersRoute: typeof DashboardAdminUsersRoute
 }
 
 const DashboardAdminRouteChildren: DashboardAdminRouteChildren = {
+  DashboardAdminCodesRoute: DashboardAdminCodesRoute,
   DashboardAdminUsersRoute: DashboardAdminUsersRoute,
 }
 
