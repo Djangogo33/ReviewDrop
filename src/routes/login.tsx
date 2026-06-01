@@ -53,8 +53,6 @@ function Login() {
     });
     if (result.error) toast.error(result.error.message);
   };
-    if (error) toast.error(error.message);
-  };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted/30 px-4">
