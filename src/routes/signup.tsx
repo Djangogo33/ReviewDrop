@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { MessageSquarePlus, Gift } from "lucide-react";
+import { MessageSquarePlus, Gift, Apple } from "lucide-react";
+import { lovable } from "@/integrations/lovable";
 
 type SignupSearch = { ref?: string };
 
