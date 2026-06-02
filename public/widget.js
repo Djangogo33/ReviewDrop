@@ -206,6 +206,7 @@
           screenshot = null;
         }
 
+        var hp = bg.querySelector("#rdrop-website");
         var body = {
           project_token: token,
           page_url: location.href,
@@ -218,6 +219,8 @@
           author_name: nameInput.value.trim() || "Anonyme",
           message: msg,
           user_agent: navigator.userAgent,
+          website: hp ? hp.value : "",
+          open_duration_ms: Date.now() - openedAt,
         };
 
         try {
