@@ -157,6 +157,8 @@
         '<input id="rdrop-name" type="text" placeholder="Camille" />' +
         '<label>Votre message</label>' +
         '<textarea id="rdrop-msg" placeholder="Ce bouton pourrait être plus visible..."></textarea>' +
+        // Honeypot — hidden from humans, bots fill it
+        '<input id="rdrop-website" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute!important;left:-9999px!important;width:1px;height:1px;opacity:0;pointer-events:none;" />' +
         '<div id="rdrop-modal-actions">' +
         '<button class="rdrop-cancel" id="rdrop-cancel">Annuler</button>' +
         '<button class="rdrop-submit" id="rdrop-submit">Envoyer</button>' +
@@ -164,6 +166,7 @@
         (SHOW_BADGE ? '<div style="margin-top:12px;text-align:center;font-size:11px;color:#999;">Propulsé par <a href="https://reviewdrop.app" target="_blank" rel="noopener" style="color:#6366f1;text-decoration:none;font-weight:500;">ReviewDrop</a></div>' : '') +
         "</div>";
       root.appendChild(bg);
+      var openedAt = Date.now();
 
       var nameInput = bg.querySelector("#rdrop-name");
       var msgInput = bg.querySelector("#rdrop-msg");
@@ -203,6 +206,7 @@
           screenshot = null;
         }
 
+        var hp = bg.querySelector("#rdrop-website");
         var body = {
           project_token: token,
           page_url: location.href,
@@ -215,6 +219,8 @@
           author_name: nameInput.value.trim() || "Anonyme",
           message: msg,
           user_agent: navigator.userAgent,
+          website: hp ? hp.value : "",
+          open_duration_ms: Date.now() - openedAt,
         };
 
         try {
