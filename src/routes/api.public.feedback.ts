@@ -14,6 +14,10 @@ const FeedbackSchema = z.object({
   author_name: z.string().min(1).max(80).default("Anonyme"),
   message: z.string().min(1).max(2000),
   user_agent: z.string().max(500).optional().nullable(),
+  // Anti-spam honeypot — bots fill this hidden field; humans never see it
+  website: z.string().max(0).optional().nullable(),
+  // Time-trap: ms between widget open and submit; bots fill instantly
+  open_duration_ms: z.number().int().min(0).max(86_400_000).optional().nullable(),
 });
 
 const corsHeaders = {
