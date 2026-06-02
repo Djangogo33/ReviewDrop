@@ -68,6 +68,15 @@ export const Route = createFileRoute("/api/public/feedback")({
           }
           const data = parsed.data;
 
+          // Honeypot tripped or submission too fast (< 1.2s) → silently accept and drop
+          const tooFast = typeof data.open_duration_ms === "number" && data.open_duration_ms < 1200;
+          if ((data.website && data.website.length > 0) || tooFast) {
+            return new Response(JSON.stringify({ ok: true, id: "discarded" }), {
+              status: 201,
+              headers: { "Content-Type": "application/json", ...corsHeaders },
+            });
+          }
+
           if (rateLimited(`${ip}:${data.project_token}`)) {
             return new Response(JSON.stringify({ error: "Too many requests" }), {
               status: 429,
