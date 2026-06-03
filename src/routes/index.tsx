@@ -8,6 +8,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { InteractiveDemo } from "@/components/InteractiveDemo";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -94,6 +95,17 @@ function Landing() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Interactive demo */}
+      <section id="try" className="container mx-auto px-4 py-20">
+        <h2 className="text-center text-3xl font-bold">Essayez tout de suite</h2>
+        <p className="mt-3 text-center text-muted-foreground max-w-xl mx-auto">
+          Pas besoin de compte. Cliquez sur la maquette pour voir comment vos clients laisseront leurs retours.
+        </p>
+        <div className="mt-12">
+          <InteractiveDemo />
         </div>
       </section>
 
@@ -254,8 +266,15 @@ function Landing() {
 
       {/* Footer */}
       <footer className="border-t border-border py-8">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          © {new Date().getFullYear()} ReviewDrop. Fait en France.
+        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground space-y-2">
+          <div className="flex items-center justify-center gap-4 flex-wrap">
+            <Link to="/legal/terms" className="hover:text-foreground">CGU</Link>
+            <span>·</span>
+            <Link to="/legal/privacy" className="hover:text-foreground">Confidentialité</Link>
+            <span>·</span>
+            <a href="mailto:paul.ardant@gmail.com" className="hover:text-foreground">Contact</a>
+          </div>
+          <div>© {new Date().getFullYear()} ReviewDrop. Fait en France.</div>
         </div>
       </footer>
     </div>

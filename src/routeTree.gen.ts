@@ -15,6 +15,8 @@ import { Route as DemoRouteImport } from './routes/demo'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as RTokenRouteImport } from './routes/r.$token'
+import { Route as LegalTermsRouteImport } from './routes/legal.terms'
+import { Route as LegalPrivacyRouteImport } from './routes/legal.privacy'
 import { Route as DashboardReferralsRouteImport } from './routes/dashboard.referrals'
 import { Route as DashboardRedeemRouteImport } from './routes/dashboard.redeem'
 import { Route as DashboardInstallRouteImport } from './routes/dashboard.install'
@@ -56,6 +58,16 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
 const RTokenRoute = RTokenRouteImport.update({
   id: '/r/$token',
   path: '/r/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalTermsRoute = LegalTermsRouteImport.update({
+  id: '/legal/terms',
+  path: '/legal/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalPrivacyRoute = LegalPrivacyRouteImport.update({
+  id: '/legal/privacy',
+  path: '/legal/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardReferralsRoute = DashboardReferralsRouteImport.update({
@@ -132,6 +144,8 @@ export interface FileRoutesByFullPath {
   '/dashboard/install': typeof DashboardInstallRoute
   '/dashboard/redeem': typeof DashboardRedeemRoute
   '/dashboard/referrals': typeof DashboardReferralsRoute
+  '/legal/privacy': typeof LegalPrivacyRoute
+  '/legal/terms': typeof LegalTermsRoute
   '/r/$token': typeof RTokenRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/api/public/feedback': typeof ApiPublicFeedbackRoute
@@ -152,6 +166,8 @@ export interface FileRoutesByTo {
   '/dashboard/install': typeof DashboardInstallRoute
   '/dashboard/redeem': typeof DashboardRedeemRoute
   '/dashboard/referrals': typeof DashboardReferralsRoute
+  '/legal/privacy': typeof LegalPrivacyRoute
+  '/legal/terms': typeof LegalTermsRoute
   '/r/$token': typeof RTokenRoute
   '/dashboard': typeof DashboardIndexRoute
   '/api/public/feedback': typeof ApiPublicFeedbackRoute
@@ -173,6 +189,8 @@ export interface FileRoutesById {
   '/dashboard/install': typeof DashboardInstallRoute
   '/dashboard/redeem': typeof DashboardRedeemRoute
   '/dashboard/referrals': typeof DashboardReferralsRoute
+  '/legal/privacy': typeof LegalPrivacyRoute
+  '/legal/terms': typeof LegalTermsRoute
   '/r/$token': typeof RTokenRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/api/public/feedback': typeof ApiPublicFeedbackRoute
@@ -195,6 +213,8 @@ export interface FileRouteTypes {
     | '/dashboard/install'
     | '/dashboard/redeem'
     | '/dashboard/referrals'
+    | '/legal/privacy'
+    | '/legal/terms'
     | '/r/$token'
     | '/dashboard/'
     | '/api/public/feedback'
@@ -215,6 +235,8 @@ export interface FileRouteTypes {
     | '/dashboard/install'
     | '/dashboard/redeem'
     | '/dashboard/referrals'
+    | '/legal/privacy'
+    | '/legal/terms'
     | '/r/$token'
     | '/dashboard'
     | '/api/public/feedback'
@@ -235,6 +257,8 @@ export interface FileRouteTypes {
     | '/dashboard/install'
     | '/dashboard/redeem'
     | '/dashboard/referrals'
+    | '/legal/privacy'
+    | '/legal/terms'
     | '/r/$token'
     | '/dashboard/'
     | '/api/public/feedback'
@@ -256,6 +280,8 @@ export interface RootRouteChildren {
   DashboardInstallRoute: typeof DashboardInstallRoute
   DashboardRedeemRoute: typeof DashboardRedeemRoute
   DashboardReferralsRoute: typeof DashboardReferralsRoute
+  LegalPrivacyRoute: typeof LegalPrivacyRoute
+  LegalTermsRoute: typeof LegalTermsRoute
   RTokenRoute: typeof RTokenRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
   ApiPublicFeedbackRoute: typeof ApiPublicFeedbackRoute
@@ -306,6 +332,20 @@ declare module '@tanstack/react-router' {
       path: '/r/$token'
       fullPath: '/r/$token'
       preLoaderRoute: typeof RTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal/terms': {
+      id: '/legal/terms'
+      path: '/legal/terms'
+      fullPath: '/legal/terms'
+      preLoaderRoute: typeof LegalTermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal/privacy': {
+      id: '/legal/privacy'
+      path: '/legal/privacy'
+      fullPath: '/legal/privacy'
+      preLoaderRoute: typeof LegalPrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard/referrals': {
@@ -420,6 +460,8 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardInstallRoute: DashboardInstallRoute,
   DashboardRedeemRoute: DashboardRedeemRoute,
   DashboardReferralsRoute: DashboardReferralsRoute,
+  LegalPrivacyRoute: LegalPrivacyRoute,
+  LegalTermsRoute: LegalTermsRoute,
   RTokenRoute: RTokenRoute,
   DashboardIndexRoute: DashboardIndexRoute,
   ApiPublicFeedbackRoute: ApiPublicFeedbackRoute,
