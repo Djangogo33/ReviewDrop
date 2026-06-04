@@ -17,7 +17,14 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "Recueillez les retours de vos clients directement sur vos sites web et maquettes. Sans email, sans chaos. L'outil pensé pour les freelances web et graphistes." },
       { property: "og:title", content: "ReviewDrop — Feedback client visuel pour freelances" },
       { property: "og:description", content: "Vos clients commentent directement sur vos sites et maquettes en 30 secondes." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://reviewdrop.lovable.app" },
+      { property: "og:locale", content: "fr_FR" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "ReviewDrop — Feedback client visuel" },
+      { name: "twitter:description", content: "Vos clients commentent directement sur vos sites et maquettes en 30 secondes." },
     ],
+    links: [{ rel: "canonical", href: "https://reviewdrop.lovable.app/" }],
   }),
   component: Landing,
 });
@@ -268,6 +275,10 @@ function Landing() {
       <footer className="border-t border-border py-8">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground space-y-2">
           <div className="flex items-center justify-center gap-4 flex-wrap">
+            <Link to="/changelog" className="hover:text-foreground">Changelog</Link>
+            <span>·</span>
+            <Link to="/vs/marker" className="hover:text-foreground">vs Marker.io</Link>
+            <span>·</span>
             <Link to="/legal/terms" className="hover:text-foreground">CGU</Link>
             <span>·</span>
             <Link to="/legal/privacy" className="hover:text-foreground">Confidentialité</Link>

@@ -12,8 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DemoRouteImport } from './routes/demo'
+import { Route as ChangelogRouteImport } from './routes/changelog'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
+import { Route as VsMarkerRouteImport } from './routes/vs.marker'
 import { Route as RTokenRouteImport } from './routes/r.$token'
 import { Route as LegalTermsRouteImport } from './routes/legal.terms'
 import { Route as LegalPrivacyRouteImport } from './routes/legal.privacy'
@@ -27,6 +29,7 @@ import { Route as DashboardProjectsNewRouteImport } from './routes/dashboard.pro
 import { Route as DashboardProjectsProjectIdRouteImport } from './routes/dashboard.projects.$projectId'
 import { Route as DashboardAdminUsersRouteImport } from './routes/dashboard.admin.users'
 import { Route as DashboardAdminCodesRouteImport } from './routes/dashboard.admin.codes'
+import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api.public.stripe-webhook'
 import { Route as ApiPublicFeedbackRouteImport } from './routes/api.public.feedback'
 import { Route as ApiPublicWidgetConfigTokenRouteImport } from './routes/api.public.widget-config.$token'
 
@@ -45,6 +48,11 @@ const DemoRoute = DemoRouteImport.update({
   path: '/demo',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ChangelogRoute = ChangelogRouteImport.update({
+  id: '/changelog',
+  path: '/changelog',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -53,6 +61,11 @@ const IndexRoute = IndexRouteImport.update({
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/dashboard/',
   path: '/dashboard/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VsMarkerRoute = VsMarkerRouteImport.update({
+  id: '/vs/marker',
+  path: '/vs/marker',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RTokenRoute = RTokenRouteImport.update({
@@ -121,6 +134,11 @@ const DashboardAdminCodesRoute = DashboardAdminCodesRouteImport.update({
   path: '/codes',
   getParentRoute: () => DashboardAdminRoute,
 } as any)
+const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
+  id: '/api/public/stripe-webhook',
+  path: '/api/public/stripe-webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicFeedbackRoute = ApiPublicFeedbackRouteImport.update({
   id: '/api/public/feedback',
   path: '/api/public/feedback',
@@ -135,6 +153,7 @@ const ApiPublicWidgetConfigTokenRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/changelog': typeof ChangelogRoute
   '/demo': typeof DemoRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
@@ -147,8 +166,10 @@ export interface FileRoutesByFullPath {
   '/legal/privacy': typeof LegalPrivacyRoute
   '/legal/terms': typeof LegalTermsRoute
   '/r/$token': typeof RTokenRoute
+  '/vs/marker': typeof VsMarkerRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/api/public/feedback': typeof ApiPublicFeedbackRoute
+  '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/dashboard/admin/codes': typeof DashboardAdminCodesRoute
   '/dashboard/admin/users': typeof DashboardAdminUsersRoute
   '/dashboard/projects/$projectId': typeof DashboardProjectsProjectIdRoute
@@ -157,6 +178,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/changelog': typeof ChangelogRoute
   '/demo': typeof DemoRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
@@ -169,8 +191,10 @@ export interface FileRoutesByTo {
   '/legal/privacy': typeof LegalPrivacyRoute
   '/legal/terms': typeof LegalTermsRoute
   '/r/$token': typeof RTokenRoute
+  '/vs/marker': typeof VsMarkerRoute
   '/dashboard': typeof DashboardIndexRoute
   '/api/public/feedback': typeof ApiPublicFeedbackRoute
+  '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/dashboard/admin/codes': typeof DashboardAdminCodesRoute
   '/dashboard/admin/users': typeof DashboardAdminUsersRoute
   '/dashboard/projects/$projectId': typeof DashboardProjectsProjectIdRoute
@@ -180,6 +204,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/changelog': typeof ChangelogRoute
   '/demo': typeof DemoRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
@@ -192,8 +217,10 @@ export interface FileRoutesById {
   '/legal/privacy': typeof LegalPrivacyRoute
   '/legal/terms': typeof LegalTermsRoute
   '/r/$token': typeof RTokenRoute
+  '/vs/marker': typeof VsMarkerRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/api/public/feedback': typeof ApiPublicFeedbackRoute
+  '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/dashboard/admin/codes': typeof DashboardAdminCodesRoute
   '/dashboard/admin/users': typeof DashboardAdminUsersRoute
   '/dashboard/projects/$projectId': typeof DashboardProjectsProjectIdRoute
@@ -204,6 +231,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/changelog'
     | '/demo'
     | '/login'
     | '/signup'
@@ -216,8 +244,10 @@ export interface FileRouteTypes {
     | '/legal/privacy'
     | '/legal/terms'
     | '/r/$token'
+    | '/vs/marker'
     | '/dashboard/'
     | '/api/public/feedback'
+    | '/api/public/stripe-webhook'
     | '/dashboard/admin/codes'
     | '/dashboard/admin/users'
     | '/dashboard/projects/$projectId'
@@ -226,6 +256,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/changelog'
     | '/demo'
     | '/login'
     | '/signup'
@@ -238,8 +269,10 @@ export interface FileRouteTypes {
     | '/legal/privacy'
     | '/legal/terms'
     | '/r/$token'
+    | '/vs/marker'
     | '/dashboard'
     | '/api/public/feedback'
+    | '/api/public/stripe-webhook'
     | '/dashboard/admin/codes'
     | '/dashboard/admin/users'
     | '/dashboard/projects/$projectId'
@@ -248,6 +281,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/changelog'
     | '/demo'
     | '/login'
     | '/signup'
@@ -260,8 +294,10 @@ export interface FileRouteTypes {
     | '/legal/privacy'
     | '/legal/terms'
     | '/r/$token'
+    | '/vs/marker'
     | '/dashboard/'
     | '/api/public/feedback'
+    | '/api/public/stripe-webhook'
     | '/dashboard/admin/codes'
     | '/dashboard/admin/users'
     | '/dashboard/projects/$projectId'
@@ -271,6 +307,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ChangelogRoute: typeof ChangelogRoute
   DemoRoute: typeof DemoRoute
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
@@ -283,8 +320,10 @@ export interface RootRouteChildren {
   LegalPrivacyRoute: typeof LegalPrivacyRoute
   LegalTermsRoute: typeof LegalTermsRoute
   RTokenRoute: typeof RTokenRoute
+  VsMarkerRoute: typeof VsMarkerRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
   ApiPublicFeedbackRoute: typeof ApiPublicFeedbackRoute
+  ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
   DashboardProjectsProjectIdRoute: typeof DashboardProjectsProjectIdRoute
   DashboardProjectsNewRoute: typeof DashboardProjectsNewRoute
   ApiPublicWidgetConfigTokenRoute: typeof ApiPublicWidgetConfigTokenRoute
@@ -313,6 +352,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/changelog': {
+      id: '/changelog'
+      path: '/changelog'
+      fullPath: '/changelog'
+      preLoaderRoute: typeof ChangelogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -325,6 +371,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard/'
       preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vs/marker': {
+      id: '/vs/marker'
+      path: '/vs/marker'
+      fullPath: '/vs/marker'
+      preLoaderRoute: typeof VsMarkerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/r/$token': {
@@ -418,6 +471,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAdminCodesRouteImport
       parentRoute: typeof DashboardAdminRoute
     }
+    '/api/public/stripe-webhook': {
+      id: '/api/public/stripe-webhook'
+      path: '/api/public/stripe-webhook'
+      fullPath: '/api/public/stripe-webhook'
+      preLoaderRoute: typeof ApiPublicStripeWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/feedback': {
       id: '/api/public/feedback'
       path: '/api/public/feedback'
@@ -451,6 +511,7 @@ const DashboardAdminRouteWithChildren = DashboardAdminRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ChangelogRoute: ChangelogRoute,
   DemoRoute: DemoRoute,
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
@@ -463,8 +524,10 @@ const rootRouteChildren: RootRouteChildren = {
   LegalPrivacyRoute: LegalPrivacyRoute,
   LegalTermsRoute: LegalTermsRoute,
   RTokenRoute: RTokenRoute,
+  VsMarkerRoute: VsMarkerRoute,
   DashboardIndexRoute: DashboardIndexRoute,
   ApiPublicFeedbackRoute: ApiPublicFeedbackRoute,
+  ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
   DashboardProjectsProjectIdRoute: DashboardProjectsProjectIdRoute,
   DashboardProjectsNewRoute: DashboardProjectsNewRoute,
   ApiPublicWidgetConfigTokenRoute: ApiPublicWidgetConfigTokenRoute,
@@ -472,12 +535,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
