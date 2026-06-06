@@ -300,3 +300,60 @@ function FrameworkHint({ name, hint }: { name: string; hint: string }) {
     </div>
   );
 }
+
+function TestFeedbackButton({ project }: { project: Project }) {
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+  const send = async () => {
+    setSending(true);
+    try {
+      const origin = typeof window !== "undefined" ? window.location.origin : "";
+      const res = await fetch(`${origin}/api/public/feedback`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          project_token: project.public_token,
+          page_url: `${origin}/dashboard/install`,
+          position_x: 50,
+          position_y: 50,
+          viewport_w: window.innerWidth,
+          viewport_h: window.innerHeight,
+          author_name: "Test depuis le dashboard",
+          message: "✅ Feedback de test — votre intégration fonctionne !",
+          user_agent: navigator.userAgent.slice(0, 500),
+          open_duration_ms: 2500,
+        }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      setSent(true);
+      toast.success("Feedback de test envoyé — vérifiez le projet !");
+      setTimeout(() => setSent(false), 3000);
+    } catch (e) {
+      console.error(e);
+      toast.error("Échec de l'envoi du test");
+    } finally {
+      setSending(false);
+    }
+  };
+  return (
+    <div className="flex flex-wrap items-center gap-3">
+      <Button onClick={send} disabled={sending} variant="default" size="sm">
+        {sending ? (
+          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+        ) : sent ? (
+          <Check className="h-3.5 w-3.5" />
+        ) : (
+          <Send className="h-3.5 w-3.5" />
+        )}
+        Envoyer un feedback de test
+      </Button>
+      <Link to="/dashboard/projects/$projectId" params={{ projectId: project.id }}>
+        <Button variant="outline" size="sm">
+          Voir dans le projet
+          <ExternalLink className="ml-2 h-3.5 w-3.5" />
+        </Button>
+      </Link>
+    </div>
+  );
+}
+
