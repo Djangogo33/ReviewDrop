@@ -176,10 +176,14 @@ function InstallPage() {
                     Cliquez sur le bouton <span className="font-medium text-foreground">Feedback</span>,
                     pointez un élément, écrivez un message. Il apparaît instantanément dans votre dashboard.
                   </p>
+                  <div className="mt-4">
+                    <TestFeedbackButton project={project} />
+                  </div>
                 </Step>
               </TabsContent>
 
               <TabsContent value="mockup" className="mt-6 space-y-6">
+
                 <Step
                   number={1}
                   title="Exportez votre maquette en image"
