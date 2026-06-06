@@ -76,18 +76,13 @@ function Signup() {
   };
 
   const handleGoogle = async () => {
-    // Stocker le code dans localStorage pour le récupérer après le redirect OAuth
     if (ref && typeof window !== "undefined") {
       localStorage.setItem("reviewdrop_pending_ref", ref.toUpperCase());
     }
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/dashboard`,
-        ...(ref ? { queryParams: { referral_code: ref.toUpperCase() } } : {}),
-      },
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: `${window.location.origin}/dashboard`,
     });
-    if (error) toast.error(error.message);
+    if (result.error) toast.error(result.error.message);
   };
 
   const handleApple = async () => {
