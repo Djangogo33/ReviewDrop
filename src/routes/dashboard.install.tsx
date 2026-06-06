@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Copy, Check, Globe, Image as ImageIcon, ExternalLink, Code2, Figma } from "lucide-react";
+import { Copy, Check, Globe, Image as ImageIcon, ExternalLink, Code2, Figma, Send, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import type { Tables } from "@/integrations/supabase/types";
 
