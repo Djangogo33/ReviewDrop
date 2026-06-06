@@ -222,7 +222,11 @@ function InstallPage() {
                     Prévisualiser le lien
                     <ExternalLink className="ml-1 h-3.5 w-3.5" />
                   </a>
+                  <div className="mt-4">
+                    <TestFeedbackButton project={project} />
+                  </div>
                 </Step>
+
               </TabsContent>
             </Tabs>
           )}
