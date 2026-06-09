@@ -10,6 +10,15 @@ import {
 } from "@/components/ui/accordion";
 import { InteractiveDemo } from "@/components/InteractiveDemo";
 
+const FAQ_ITEMS = [
+  { q: "Comment installer le widget sur mon site ?", a: "Une fois votre projet créé, vous obtenez un snippet à coller dans la balise <head> de votre site. Compatible avec WordPress, Webflow, Framer, Shopify, ainsi que toutes les apps React, Vue ou Svelte (SPA inclus)." },
+  { q: "Mes clients doivent-ils créer un compte ?", a: "Non. Ils cliquent sur le widget, écrivent leur retour et c'est tout. Vous recevez le contexte complet : URL, position du clic, capture d'écran et navigateur utilisé." },
+  { q: "Et si je n'ai qu'une maquette, pas encore de site ?", a: "Créez un projet de type Maquette et uploadez votre image (PNG ou JPG). Vous obtenez un lien à partager : votre client commente directement sur la maquette." },
+  { q: "Quelle est la différence entre Free et Pro ?", a: "Le plan Free gère jusqu'à 3 projets actifs avec un nombre illimité de feedbacks. Le plan Pro à 9€/mois débloque les projets illimités, la personnalisation du widget et un support prioritaire." },
+  { q: "Puis-je annuler à tout moment ?", a: "Oui. L'abonnement Pro est sans engagement. Vous pouvez annuler en un clic depuis la page Facturation." },
+  { q: "Mes données sont-elles hébergées en Europe ?", a: "Oui. ReviewDrop est hébergé sur une infrastructure européenne et conforme au RGPD." },
+];
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -25,6 +34,36 @@ export const Route = createFileRoute("/")({
       { name: "twitter:description", content: "Vos clients commentent directement sur vos sites et maquettes en 30 secondes." },
     ],
     links: [{ rel: "canonical", href: "https://reviewdrop.lovable.app/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              name: "ReviewDrop",
+              url: "https://reviewdrop.lovable.app",
+              logo: "https://reviewdrop.lovable.app/favicon.ico",
+            },
+            {
+              "@type": "WebSite",
+              name: "ReviewDrop",
+              url: "https://reviewdrop.lovable.app",
+              inLanguage: "fr-FR",
+            },
+            {
+              "@type": "FAQPage",
+              mainEntity: FAQ_ITEMS.map((f) => ({
+                "@type": "Question",
+                name: f.q,
+                acceptedAnswer: { "@type": "Answer", text: f.a },
+              })),
+            },
+          ],
+        }),
+      },
+    ],
   }),
   component: Landing,
 });
