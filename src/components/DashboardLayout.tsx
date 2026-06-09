@@ -74,11 +74,11 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
             </span>
             ReviewDrop
           </Link>
-          <Button onClick={handleSignOut} variant="ghost" size="sm">
+          <Button onClick={handleSignOut} variant="ghost" size="sm" aria-label="Se déconnecter">
             <LogOut className="h-4 w-4" />
           </Button>
         </div>
-        <main className="flex-1">{children}</main>
+        <div className="flex-1">{children}</div>
       </div>
     </div>
   );
