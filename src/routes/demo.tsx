@@ -231,7 +231,7 @@ function DemoPage() {
                 >
                   <div className="flex items-center justify-between mb-1">
                     <div className="text-xs font-semibold">{pin.author}</div>
-                    <button onClick={() => setActivePin(null)} className="text-muted-foreground hover:text-foreground">
+                    <button onClick={() => setActivePin(null)} aria-label="Fermer le commentaire" className="text-muted-foreground hover:text-foreground">
                       <X className="h-3 w-3" />
                     </button>
                   </div>
