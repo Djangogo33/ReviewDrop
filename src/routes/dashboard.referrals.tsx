@@ -10,7 +10,15 @@ import { Gift, Copy, Check, Share2, Users, Sparkles, Shield, AlertTriangle } fro
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/dashboard/referrals")({
-  head: () => ({ meta: [{ title: "Parrainage — ReviewDrop" }] }),
+  head: () => ({
+    meta: [
+      { title: "Parrainage — ReviewDrop" },
+      { name: "description", content: "Invitez d'autres freelances à découvrir ReviewDrop et gagnez des mois Pro gratuits grâce au programme de parrainage." },
+      { property: "og:title", content: "Programme de parrainage ReviewDrop" },
+      { property: "og:description", content: "Partagez ReviewDrop avec votre réseau et débloquez des récompenses Pro." },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: () => (
     <RequireAuth>
       <DashboardLayout>
