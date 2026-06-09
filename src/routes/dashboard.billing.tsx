@@ -4,7 +4,15 @@ import { DashboardLayout } from "@/components/DashboardLayout";
 import { ArrowLeft, Sparkles, Check } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard/billing")({
-  head: () => ({ meta: [{ title: "Abonnement — ReviewDrop" }] }),
+  head: () => ({
+    meta: [
+      { title: "Abonnement — ReviewDrop" },
+      { name: "description", content: "Gérez votre abonnement ReviewDrop : suivez votre plan actif et accédez aux fonctionnalités Pro débloquées pendant la beta." },
+      { property: "og:title", content: "Votre abonnement ReviewDrop" },
+      { property: "og:description", content: "Consultez et gérez votre plan ReviewDrop depuis votre tableau de bord." },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: () => (
     <RequireAuth>
       <DashboardLayout>
