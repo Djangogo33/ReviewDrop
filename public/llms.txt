@@ -1,0 +1,15 @@
+# ReviewDrop
+
+> ReviewDrop est un outil de feedback visuel pour freelances web et graphistes. Les clients commentent directement sur les sites et maquettes, sans email ni PDF annoté.
+
+## Pages
+
+- [Accueil](/): Présentation de ReviewDrop, fonctionnalités et tarifs.
+- [Démo interactive](/demo): Essayez le widget de feedback en direct.
+- [Changelog](/changelog): Nouveautés et améliorations récentes.
+- [ReviewDrop vs Marker.io](/vs/marker): Comparaison avec Marker.io.
+
+## Optional
+
+- [Conditions générales](/legal/terms): CGU du service.
+- [Politique de confidentialité](/legal/privacy): Données personnelles et RGPD.
