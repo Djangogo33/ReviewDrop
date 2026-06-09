@@ -15,7 +15,12 @@ type SignupSearch = { ref?: string };
 
 export const Route = createFileRoute("/signup")({
   head: () => ({
-    meta: [{ title: "Inscription — ReviewDrop" }, { name: "description", content: "Créez votre compte ReviewDrop gratuitement." }],
+    meta: [
+      { title: "Inscription — ReviewDrop" },
+      { name: "description", content: "Créez votre compte ReviewDrop gratuitement et commencez à recueillir des feedbacks visuels de vos clients en quelques minutes." },
+      { property: "og:title", content: "Créer un compte ReviewDrop" },
+      { property: "og:description", content: "Inscription gratuite : centralisez les retours clients sur vos sites et maquettes en 30 secondes." },
+    ],
   }),
   validateSearch: (search: Record<string, unknown>): SignupSearch => ({
     ref: typeof search.ref === "string" ? search.ref : undefined,

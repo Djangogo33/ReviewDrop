@@ -231,7 +231,7 @@ function DemoPage() {
                 >
                   <div className="flex items-center justify-between mb-1">
                     <div className="text-xs font-semibold">{pin.author}</div>
-                    <button onClick={() => setActivePin(null)} className="text-muted-foreground hover:text-foreground">
+                    <button onClick={() => setActivePin(null)} aria-label="Fermer le commentaire" className="text-muted-foreground hover:text-foreground">
                       <X className="h-3 w-3" />
                     </button>
                   </div>
@@ -278,7 +278,7 @@ function DemoPage() {
                 <div className="w-full max-w-md rounded-xl border border-border bg-background p-5 shadow-2xl">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="font-semibold">Votre retour</h3>
-                    <button onClick={cancelForm} className="text-muted-foreground hover:text-foreground">
+                    <button onClick={cancelForm} aria-label="Fermer le formulaire" className="text-muted-foreground hover:text-foreground">
                       <X className="h-4 w-4" />
                     </button>
                   </div>

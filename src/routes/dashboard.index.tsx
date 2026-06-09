@@ -14,7 +14,15 @@ type Project = Tables<"projects"> & { open_count: number; unread_count: number }
 type Feedback = Tables<"feedbacks">;
 
 export const Route = createFileRoute("/dashboard/")({
-  head: () => ({ meta: [{ title: "Dashboard — ReviewDrop" }] }),
+  head: () => ({
+    meta: [
+      { title: "Dashboard — ReviewDrop" },
+      { name: "description", content: "Vue d'ensemble de vos projets ReviewDrop : feedbacks reçus, projets actifs et accès rapide aux paramètres de votre compte." },
+      { property: "og:title", content: "Dashboard ReviewDrop" },
+      { property: "og:description", content: "Gérez vos projets de feedback visuel et suivez les retours clients en un coup d'œil." },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: () => (
     <RequireAuth>
       <DashboardLayout>

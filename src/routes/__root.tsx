@@ -31,17 +31,13 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "ReviewDrop — Recueillez les feedbacks clients en 30 secondes" },
+      { title: "ReviewDrop — Feedback client visuel en 30 secondes" },
       { name: "description", content: "L'outil de feedback visuel pour freelances web. Vos clients commentent directement sur vos sites et maquettes — sans email, sans chaos." },
       { name: "author", content: "ReviewDrop" },
-      { property: "og:title", content: "ReviewDrop — Recueillez les feedbacks clients en 30 secondes" },
-      { property: "og:description", content: "L'outil de feedback visuel pour freelances web. Vos clients commentent directement sur vos sites et maquettes — sans email, sans chaos." },
+      { property: "og:site_name", content: "ReviewDrop" },
       { property: "og:type", content: "website" },
+      { property: "og:locale", content: "fr_FR" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "ReviewDrop — Recueillez les feedbacks clients en 30 secondes" },
-      { name: "twitter:description", content: "L'outil de feedback visuel pour freelances web. Vos clients commentent directement sur vos sites et maquettes — sans email, sans chaos." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d7c35e72-04d3-4495-a9b6-06b527861986/id-preview-ded5c66b--cca57c64-38f8-4796-b036-046a453e2951.lovable.app-1777102785275.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d7c35e72-04d3-4495-a9b6-06b527861986/id-preview-ded5c66b--cca57c64-38f8-4796-b036-046a453e2951.lovable.app-1777102785275.png" },
     ],
     links: [
       {
@@ -72,7 +68,9 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   return (
     <AuthProvider>
-      <Outlet />
+      <main>
+        <Outlet />
+      </main>
       <Toaster />
     </AuthProvider>
   );
