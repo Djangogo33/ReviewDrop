@@ -11,7 +11,15 @@ import { toast } from "sonner";
 import { ArrowLeft, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard/account")({
-  head: () => ({ meta: [{ title: "Mon compte — ReviewDrop" }] }),
+  head: () => ({
+    meta: [
+      { title: "Mon compte — ReviewDrop" },
+      { name: "description", content: "Gérez les paramètres de votre compte ReviewDrop : profil, mot de passe et suppression du compte." },
+      { property: "og:title", content: "Paramètres du compte ReviewDrop" },
+      { property: "og:description", content: "Mettez à jour vos informations personnelles et préférences ReviewDrop." },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: () => (
     <RequireAuth>
       <DashboardLayout>
