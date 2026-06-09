@@ -11,7 +11,13 @@ import { lovable } from "@/integrations/lovable";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
-    meta: [{ title: "Connexion — ReviewDrop" }, { name: "description", content: "Connectez-vous à ReviewDrop." }],
+    meta: [
+      { title: "Connexion — ReviewDrop" },
+      { name: "description", content: "Connectez-vous à votre compte ReviewDrop pour gérer vos projets et consulter les feedbacks visuels de vos clients." },
+      { property: "og:title", content: "Connexion à ReviewDrop" },
+      { property: "og:description", content: "Accédez à votre tableau de bord ReviewDrop : projets, feedbacks et personnalisation du widget." },
+      { name: "robots", content: "noindex" },
+    ],
   }),
   component: Login,
 });
