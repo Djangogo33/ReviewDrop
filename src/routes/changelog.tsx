@@ -138,10 +138,10 @@ function ChangelogPage() {
             Une idée, un bug, une demande ?
           </p>
           <a
-            href="mailto:paul.ardant@gmail.com"
+            href="mailto:djangogo33.tdac@gmail.com"
             className="mt-2 inline-block text-sm font-medium text-primary hover:underline"
           >
-            paul.ardant@gmail.com
+            djangogo33.tdac@gmail.com
           </a>
         </div>
       </section>
