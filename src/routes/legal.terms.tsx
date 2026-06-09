@@ -84,7 +84,7 @@ function TermsPage() {
 
           <h2 className="text-xl font-semibold mt-8">9. Contact</h2>
           <p>
-            Pour toute question : <a href="mailto:paul.ardant@gmail.com" className="text-primary underline">paul.ardant@gmail.com</a>
+            Pour toute question : <a href="mailto:djangogo33.tdac@gmail.com" className="text-primary underline">djangogo33.tdac@gmail.com</a>
           </p>
 
           <p className="mt-12 text-xs text-muted-foreground">

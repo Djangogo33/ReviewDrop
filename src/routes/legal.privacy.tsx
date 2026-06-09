@@ -28,7 +28,7 @@ function PrivacyPage() {
           <h2 className="text-xl font-semibold mt-8">1. Responsable du traitement</h2>
           <p>
             Le responsable du traitement des données est l'éditeur de ReviewDrop, joignable à
-            l'adresse <a href="mailto:paul.ardant@gmail.com" className="text-primary underline">paul.ardant@gmail.com</a>.
+            l'adresse <a href="mailto:djangogo33.tdac@gmail.com" className="text-primary underline">djangogo33.tdac@gmail.com</a>.
           </p>
 
           <h2 className="text-xl font-semibold mt-8">2. Données collectées</h2>
@@ -76,7 +76,7 @@ function PrivacyPage() {
           </p>
           <ul className="list-disc pl-6 space-y-1">
             <li>directement depuis la section « Compte » de votre dashboard (export ou suppression) ;</li>
-            <li>en écrivant à <a href="mailto:paul.ardant@gmail.com" className="text-primary underline">paul.ardant@gmail.com</a>.</li>
+            <li>en écrivant à <a href="mailto:djangogo33.tdac@gmail.com" className="text-primary underline">djangogo33.tdac@gmail.com</a>.</li>
           </ul>
 
           <h2 className="text-xl font-semibold mt-8">8. Cookies</h2>

@@ -322,7 +322,7 @@ function Landing() {
             <span>·</span>
             <Link to="/legal/privacy" className="hover:text-foreground">Confidentialité</Link>
             <span>·</span>
-            <a href="mailto:paul.ardant@gmail.com" className="hover:text-foreground">Contact</a>
+            <a href="mailto:djangogo33.tdac@gmail.com" className="hover:text-foreground">Contact</a>
           </div>
           <div>© {new Date().getFullYear()} ReviewDrop. Fait en France.</div>
         </div>
