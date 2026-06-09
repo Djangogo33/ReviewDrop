@@ -187,12 +187,13 @@ function ReviewPage() {
             <h2 className="font-semibold mb-4">Votre feedback</h2>
             <div className="space-y-3">
               <div>
-                <label className="text-xs font-medium text-muted-foreground">Votre prénom</label>
-                <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Camille" className="mt-1" />
+                <label htmlFor="rd-feedback-name" className="text-xs font-medium text-muted-foreground">Votre prénom</label>
+                <Input id="rd-feedback-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Camille" className="mt-1" />
               </div>
               <div>
-                <label className="text-xs font-medium text-muted-foreground">Message</label>
+                <label htmlFor="rd-feedback-message" className="text-xs font-medium text-muted-foreground">Message</label>
                 <Textarea
+                  id="rd-feedback-message"
                   autoFocus
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
