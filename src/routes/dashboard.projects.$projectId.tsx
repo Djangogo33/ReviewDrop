@@ -83,6 +83,16 @@ function ProjectPage() {
   const [copied, setCopied] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [plan, setPlan] = useState<PlanId>("free");
+  const [mockupUrl, setMockupUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!project?.mockup_image_path) { setMockupUrl(null); return; }
+    supabase.storage.from("mockups").createSignedUrl(project.mockup_image_path, 60 * 60).then(({ data }) => {
+      if (!cancelled) setMockupUrl(data?.signedUrl ?? null);
+    });
+    return () => { cancelled = true; };
+  }, [project?.mockup_image_path]);
 
   useEffect(() => {
     if (!user) return;
