@@ -32,7 +32,7 @@ export const Route = createFileRoute("/dashboard/projects/$projectId")({
 const STATUS_LABEL: Record<string, string> = {
   open: "Ouvert",
   in_progress: "En cours",
-  closed: "Résolu",
+  resolved: "Résolu",
 };
 
 function csvEscape(v: unknown): string {
@@ -149,7 +149,7 @@ function ProjectPage() {
   const selected = feedbacks.find((f) => f.id === selectedId) ?? null;
 
   const counts = useMemo(() => {
-    const c = { open: 0, in_progress: 0, closed: 0 };
+    const c = { open: 0, in_progress: 0, resolved: 0 };
     feedbacks.forEach((f) => {
       c[f.status as keyof typeof c]++;
     });
@@ -265,7 +265,7 @@ function ProjectPage() {
           { key: "all", label: `Tous (${feedbacks.length})` },
           { key: "open", label: `Ouverts (${counts.open})` },
           { key: "in_progress", label: `En cours (${counts.in_progress})` },
-          { key: "closed", label: `Résolus (${counts.closed})` },
+          { key: "resolved", label: `Résolus (${counts.resolved})` },
         ].map((f) => (
           <button
             key={f.key}
@@ -306,7 +306,7 @@ function ProjectPage() {
                   style={{
                     left: `${f.position_x}%`,
                     top: `${f.position_y}%`,
-                    backgroundColor: f.status === "closed" ? "#10b981" : f.status === "in_progress" ? "#f59e0b" : project.brand_color,
+                    backgroundColor: f.status === "resolved" ? "#10b981" : f.status === "in_progress" ? "#f59e0b" : project.brand_color,
                   }}
                 >
                   {feedbacks.length - feedbacks.indexOf(f)}
@@ -351,15 +351,27 @@ function ProjectPage() {
                 )}
                 <div className="flex items-start justify-between gap-2 mb-1 pr-4">
                   <span className={`text-xs ${!f.is_read ? "font-bold" : "font-medium"}`}>{f.author_name}</span>
-                  <span className={`text-xs px-2 py-0.5 rounded-full ${
-                    f.status === "open" ? "bg-blue-100 text-blue-700" :
-                    f.status === "in_progress" ? "bg-amber-100 text-amber-700" :
-                    "bg-green-100 text-green-700"
-                  }`}>
-                    {STATUS_LABEL[f.status]}
-                  </span>
+                  <div className="flex items-center gap-1">
+                    {(f as Feedback & { category?: string | null }).category && (
+                      <span className="text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
+                        {(f as Feedback & { category?: string | null }).category}
+                      </span>
+                    )}
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${
+                      f.status === "open" ? "bg-blue-100 text-blue-700" :
+                      f.status === "in_progress" ? "bg-amber-100 text-amber-700" :
+                      "bg-green-100 text-green-700"
+                    }`}>
+                      {STATUS_LABEL[f.status]}
+                    </span>
+                  </div>
                 </div>
                 <p className="text-sm text-foreground line-clamp-2">{f.message}</p>
+                {(f as Feedback & { ai_summary?: string | null }).ai_summary && (
+                  <p className="mt-1 text-xs italic text-muted-foreground line-clamp-1">
+                    ✨ {(f as Feedback & { ai_summary?: string | null }).ai_summary}
+                  </p>
+                )}
                 <p className="mt-2 text-xs text-muted-foreground">
                   {new Date(f.created_at).toLocaleString("fr-FR")}
                 </p>
@@ -456,7 +468,7 @@ function FeedbackDetail({
       </div>
 
       <div className="flex gap-1 flex-wrap">
-        {(["open", "in_progress", "closed"] as const).map((s) => (
+        {(["open", "in_progress", "resolved"] as const).map((s) => (
           <button
             key={s}
             onClick={() => onStatusChange(s)}

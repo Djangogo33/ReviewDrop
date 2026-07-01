@@ -51,7 +51,9 @@ export type Database = {
       }
       feedbacks: {
         Row: {
+          ai_summary: string | null
           author_name: string
+          category: string | null
           created_at: string
           css_selector: string | null
           id: string
@@ -69,7 +71,9 @@ export type Database = {
           viewport_w: number | null
         }
         Insert: {
+          ai_summary?: string | null
           author_name?: string
+          category?: string | null
           created_at?: string
           css_selector?: string | null
           id?: string
@@ -87,7 +91,9 @@ export type Database = {
           viewport_w?: number | null
         }
         Update: {
+          ai_summary?: string | null
           author_name?: string
+          category?: string | null
           created_at?: string
           css_selector?: string | null
           id?: string
@@ -120,6 +126,7 @@ export type Database = {
           email: string | null
           full_name: string | null
           id: string
+          onboarded_at: string | null
           plan: string
           plan_expires_at: string | null
           referral_code: string | null
@@ -135,6 +142,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id: string
+          onboarded_at?: string | null
           plan?: string
           plan_expires_at?: string | null
           referral_code?: string | null
@@ -150,6 +158,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
+          onboarded_at?: string | null
           plan?: string
           plan_expires_at?: string | null
           referral_code?: string | null

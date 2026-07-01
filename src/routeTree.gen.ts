@@ -26,6 +26,7 @@ import { Route as DashboardReferralsRouteImport } from './routes/dashboard.refer
 import { Route as DashboardRedeemRouteImport } from './routes/dashboard.redeem'
 import { Route as DashboardInstallRouteImport } from './routes/dashboard.install'
 import { Route as DashboardBillingRouteImport } from './routes/dashboard.billing'
+import { Route as DashboardAnalyticsRouteImport } from './routes/dashboard.analytics'
 import { Route as DashboardAdminRouteImport } from './routes/dashboard.admin'
 import { Route as DashboardAccountRouteImport } from './routes/dashboard.account'
 import { Route as DashboardProjectsNewRouteImport } from './routes/dashboard.projects.new'
@@ -121,6 +122,11 @@ const DashboardBillingRoute = DashboardBillingRouteImport.update({
   path: '/dashboard/billing',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardAnalyticsRoute = DashboardAnalyticsRouteImport.update({
+  id: '/dashboard/analytics',
+  path: '/dashboard/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardAdminRoute = DashboardAdminRouteImport.update({
   id: '/dashboard/admin',
   path: '/dashboard/admin',
@@ -180,6 +186,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/dashboard/account': typeof DashboardAccountRoute
   '/dashboard/admin': typeof DashboardAdminRouteWithChildren
+  '/dashboard/analytics': typeof DashboardAnalyticsRoute
   '/dashboard/billing': typeof DashboardBillingRoute
   '/dashboard/install': typeof DashboardInstallRoute
   '/dashboard/redeem': typeof DashboardRedeemRoute
@@ -208,6 +215,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/dashboard/account': typeof DashboardAccountRoute
   '/dashboard/admin': typeof DashboardAdminRouteWithChildren
+  '/dashboard/analytics': typeof DashboardAnalyticsRoute
   '/dashboard/billing': typeof DashboardBillingRoute
   '/dashboard/install': typeof DashboardInstallRoute
   '/dashboard/redeem': typeof DashboardRedeemRoute
@@ -237,6 +245,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/dashboard/account': typeof DashboardAccountRoute
   '/dashboard/admin': typeof DashboardAdminRouteWithChildren
+  '/dashboard/analytics': typeof DashboardAnalyticsRoute
   '/dashboard/billing': typeof DashboardBillingRoute
   '/dashboard/install': typeof DashboardInstallRoute
   '/dashboard/redeem': typeof DashboardRedeemRoute
@@ -267,6 +276,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/dashboard/account'
     | '/dashboard/admin'
+    | '/dashboard/analytics'
     | '/dashboard/billing'
     | '/dashboard/install'
     | '/dashboard/redeem'
@@ -295,6 +305,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/dashboard/account'
     | '/dashboard/admin'
+    | '/dashboard/analytics'
     | '/dashboard/billing'
     | '/dashboard/install'
     | '/dashboard/redeem'
@@ -323,6 +334,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/dashboard/account'
     | '/dashboard/admin'
+    | '/dashboard/analytics'
     | '/dashboard/billing'
     | '/dashboard/install'
     | '/dashboard/redeem'
@@ -352,6 +364,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   DashboardAccountRoute: typeof DashboardAccountRoute
   DashboardAdminRoute: typeof DashboardAdminRouteWithChildren
+  DashboardAnalyticsRoute: typeof DashboardAnalyticsRoute
   DashboardBillingRoute: typeof DashboardBillingRoute
   DashboardInstallRoute: typeof DashboardInstallRoute
   DashboardRedeemRoute: typeof DashboardRedeemRoute
@@ -489,6 +502,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardBillingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/analytics': {
+      id: '/dashboard/analytics'
+      path: '/dashboard/analytics'
+      fullPath: '/dashboard/analytics'
+      preLoaderRoute: typeof DashboardAnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard/admin': {
       id: '/dashboard/admin'
       path: '/dashboard/admin'
@@ -580,6 +600,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   DashboardAccountRoute: DashboardAccountRoute,
   DashboardAdminRoute: DashboardAdminRouteWithChildren,
+  DashboardAnalyticsRoute: DashboardAnalyticsRoute,
   DashboardBillingRoute: DashboardBillingRoute,
   DashboardInstallRoute: DashboardInstallRoute,
   DashboardRedeemRoute: DashboardRedeemRoute,
