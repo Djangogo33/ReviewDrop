@@ -23,6 +23,7 @@ interface PublicProject {
   type: "live" | "mockup";
   brand_color: string;
   mockup_image_path: string | null;
+  mockup_url: string | null;
   is_active: boolean;
 }
 
