@@ -59,9 +59,7 @@ function ReviewPage() {
     if (stored) setName(stored);
   }, [token]);
 
-  const mockupUrl = project?.mockup_image_path
-    ? supabase.storage.from("mockups").getPublicUrl(project.mockup_image_path).data.publicUrl
-    : null;
+  const mockupUrl = project?.mockup_url ?? null;
 
   const handleImageClick = (e: React.MouseEvent<HTMLImageElement>) => {
     if (!pinning) return;
