@@ -1,68 +1,82 @@
-# Que développer ensuite ?
+# Plan — 4 chantiers en série
 
-Voici ce qui manque encore à ReviewDrop, classé par impact business. Choisis une piste et je l'implémente.
+Livré dans cet ordre (impact décroissant, dépendances gérées).
 
-## 1. Paiements & abonnements (impact: 🔥🔥🔥)
+## 1. Réponses aux feedbacks (fil de discussion)
 
-Aujourd'hui les plans Free/Pro/Max existent dans le code, mais **personne ne peut payer**. La page Tarifs n'a pas de bouton fonctionnel et `dashboard.billing.tsx` est un placeholder.
+**Base de données**
+- Ajouter `feedbacks.status` (`open` | `in_progress` | `resolved`), défaut `open`.
+- Vérifier RLS sur `feedback_replies` (déjà en place) : lecture/écriture par propriétaire du projet.
+- Activer Realtime sur `feedback_replies`.
 
-À faire :
+**Dashboard**
+- Dans `dashboard.projects.$projectId.tsx` : panneau latéral au clic sur un feedback avec le fil (auteur = "Vous"), zone de réponse, sélecteur de statut, badge coloré par statut.
+- Filtre en haut de liste : Tous / Ouverts / En cours / Résolus.
 
-- Activer Stripe (intégration Lovable Payments)
-- Créer les produits Pro (12€/mois) et Max (29€/mois) + équivalents annuels
-- Checkout depuis `/` et `/dashboard/billing`
-- Webhook qui met à jour `profiles.plan`, `stripe_customer_id`, `stripe_subscription_id`
-- Portail client (annulation, changement de plan, factures)
-- Crédit du parrainage : +1 mois Pro à chaque filleul confirmé (statut `confirmed` déclenché par la 1ʳᵉ facture payée)
+**Widget & page publique `/r/$token`**
+- Widget : au clic sur une épingle existante, tooltip affichant le fil des réponses (lecture seule).
+- `r.$token.tsx` : afficher les réponses sous chaque feedback + statut visible.
 
-## 2. Notifications email pour les feedbacks (impact: 🔥🔥)
+## 2. Analytics dashboard
 
-Le champ `projects.notify_email` existe mais aucun email n'est envoyé. C'est pourtant LE moment de vérité du produit : le freelance doit savoir tout de suite qu'un client a laissé un retour.
+Nouvelle route `dashboard.analytics.tsx` (onglet sidebar).
 
-À faire :
+Métriques par projet (ou global) sur 7/30/90 jours :
+- Feedbacks reçus (courbe jour par jour) via `recharts` (déjà dans le stack shadcn).
+- Répartition par statut (donut).
+- Top 5 pages (`page_url`) qui reçoivent des feedbacks.
+- Taux de résolution (% de `resolved` / total).
+- Temps de première réponse moyen.
 
-- Activer Lovable Emails (domaine d'envoi)
-- Email transactionnel à chaque nouveau feedback (auteur, message, screenshot, lien dashboard)
-- Digest quotidien optionnel pour les projets très actifs
-- Préférences par projet (instant / daily / off)
+Requêtes : agrégations SQL via `supabase.from("feedbacks").select(...)` filtré côté client (< 10k lignes attendues), pas de RPC nécessaire.
 
-## 3. Réponses aux feedbacks côté client (impact: 🔥🔥)
+## 3. Catégorisation IA des feedbacks
 
-La table `feedback_replies` existe et les RLS sont en place, mais **il n'y a aucune UI**. Le freelance ne peut pas répondre à son client, et le client ne voit jamais les réponses.
+**Base de données**
+- Ajouter `feedbacks.category` (`bug` | `idea` | `question` | `ux` | `other`) nullable.
+- Ajouter `feedbacks.ai_summary` text nullable (1 phrase).
 
-À faire :
+**Server function `categorize.functions.ts`**
+- Trigger : à chaque insertion réussie dans `api.public.feedback.ts`, on lance une catégorisation en fond via `createServerFn` (fire-and-forget côté API).
+- Modèle : `google/gemini-3-flash-preview` via Lovable AI Gateway.
+- Prompt structuré (JSON output) → écrit `category` + `ai_summary` sur la ligne.
 
-- UI de fil de discussion dans `dashboard.projects.$projectId.tsx`
-- Affichage des réponses dans le widget (tooltip d'un pin existant)
-- Notification email au client quand le freelance répond (via lien magique `/r/$token`)
-- Statuts `open` / `in_progress` / `resolved` activables d'un clic
+**UI**
+- Badge de catégorie coloré à côté de chaque feedback dans `dashboard.projects.$projectId.tsx`.
+- Filtres par catégorie (combinables avec statut).
+- Bouton "Re-catégoriser" pour l'utilisateur (Pro/Max).
 
-## 4. Page publique de partage des feedbacks (impact: 🔥)
+## 4. Polish UX + onboarding guidé
 
-Permettre au freelance d'envoyer un lien type `/r/$token` à son client pour qu'il voie les retours sans créer de compte (la route `r.$token.tsx` existe déjà mais à vérifier).
+**Tour interactif première connexion**
+- Petit composant maison (pas de dépendance) : overlay avec 4 bulles pointant vers "Nouveau projet" → "Installer" → "Feedbacks" → "Compte".
+- Skip persistant dans `profiles.onboarded_at`.
 
-## 5. Export CSV + Webhooks (plans Pro/Max) (impact: 🔥)
+**Empty states améliorés**
+- `dashboard.index.tsx` sans projet : illustration + CTA large.
+- Projet sans feedback : déjà en place, on rajoute un lien "Envoyer un feedback de test".
 
-Promis dans `plans.ts` (`csvExport`, `webhooks`) mais pas implémenté. Sans ça, les avantages Pro/Max ne sont pas tenus.
+**Micro-animations**
+- Transition d'apparition sur les cartes (fade + slide-up, Tailwind `animate-in`).
+- Toast animé lors d'un nouveau feedback realtime (déjà partiel).
 
-## 6. Onboarding & première install (impact: 🔥)
+**Raccourcis clavier**
+- `g p` → projets, `g d` → dashboard, `g a` → analytics, `?` → aide.
+- Composant `KeyboardShortcuts` dans le layout.
 
-Aujourd'hui un nouveau user atterrit sur un dashboard vide. À ajouter :
+## Détails techniques
 
-- Wizard 3 étapes après signup (nom du 1ᵉʳ projet → snippet à coller → essayer)
-- État vide guidé sur `/dashboard`
-- Checklist de progression ("Premier feedback reçu", "Snippet installé", etc.)
+- Toutes les nouvelles routes sous `_authenticated/` ne s'appliquent pas ici (le projet garde le pattern actuel `dashboard.*` avec `RequireAuth` component) — on conserve la convention existante.
+- IA : bien lire `LOVABLE_API_KEY` **dans le handler** (Cloudflare Workers).
+- Realtime : channels avec cleanup dans `useEffect` (pas de fuite).
+- Migrations : une seule par chantier, GRANTs inclus.
 
----
+## Ordre de livraison
 
-## Ma recommandation
+1. Migration (status + category + ai_summary + onboarded_at) — une seule, tout en un.
+2. Chantier 1 (réponses) — le plus attendu.
+3. Chantier 3 (IA) — court, apporte du "wow".
+4. Chantier 2 (analytics) — visuel, valorisant.
+5. Chantier 4 (polish) — finition.
 
-**Commencer par #1 (Paiements)**. Tout le reste (limites de plan, parrainage, badge "Powered by") est déjà câblé en attente d'un vrai plan payant. Sans monétisation, le parrainage que tu viens de mettre en place ne crédite rien et l'offre Max n'a pas de réalité commerciale.
-
-Ensuite #2 (Emails) qui transforme le produit d'un "outil qu'on consulte" en "outil qui te prévient" — c'est ce qui fait revenir les freelances dans le dashboard.
-
-Dis-moi laquelle tu veux et je lance.
-
-&nbsp;
-
-*Pour l'instant, ne rien activer option payante mais faire en sorte qu'elle soient prêtes à implémenter.*
+Je peux tout enchaîner sans validation intermédiaire, ou t'arrêter après chaque chantier pour que tu testes. Dis-moi.
