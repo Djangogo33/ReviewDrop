@@ -2,7 +2,8 @@ import { Link, useNavigate, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth-context";
 import { useIsAdmin } from "@/lib/use-is-admin";
 import { Button } from "@/components/ui/button";
-import { MessageSquarePlus, LayoutDashboard, CreditCard, LogOut, User, Code2, Gift, Ticket, ShieldCheck } from "lucide-react";
+import { MessageSquarePlus, LayoutDashboard, CreditCard, LogOut, User, Code2, Gift, Ticket, ShieldCheck, BarChart3 } from "lucide-react";
+import { OnboardingTour } from "@/components/OnboardingTour";
 import { ReactNode } from "react";
 
 export function DashboardLayout({ children }: { children: ReactNode }) {
@@ -18,6 +19,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
 
   const navItems = [
     { to: "/dashboard", label: "Projets", icon: LayoutDashboard },
+    { to: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
     { to: "/dashboard/install", label: "Installer le widget", icon: Code2 },
     { to: "/dashboard/referrals", label: "Parrainage", icon: Gift },
     { to: "/dashboard/redeem", label: "Activer un code", icon: Ticket },
@@ -80,6 +82,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
         </div>
         <div className="flex-1">{children}</div>
       </div>
+      <OnboardingTour />
     </div>
   );
 }
