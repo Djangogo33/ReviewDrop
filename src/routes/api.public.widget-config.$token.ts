@@ -44,6 +44,15 @@ export const Route = createFileRoute("/api/public/widget-config/$token")({
         const plan = normalizePlan(ownerProfile?.plan);
         const limits = getLimits(plan);
 
+        // Sign the mockup URL server-side (bucket is private).
+        let mockup_url: string | null = null;
+        if (project.mockup_image_path) {
+          const { data: signed } = await supabaseAdmin.storage
+            .from("mockups")
+            .createSignedUrl(project.mockup_image_path, 60 * 60);
+          mockup_url = signed?.signedUrl ?? null;
+        }
+
         // Apply plan gates to what's exposed publicly.
         const publicProject = {
           id: project.id,
@@ -51,6 +60,7 @@ export const Route = createFileRoute("/api/public/widget-config/$token")({
           type: project.type,
           brand_color: limits.customBrandColor ? project.brand_color : DEFAULT_BRAND_COLOR,
           mockup_image_path: project.mockup_image_path,
+          mockup_url,
           is_active: project.is_active,
           show_badge: !limits.removeBadge,
           plan,
