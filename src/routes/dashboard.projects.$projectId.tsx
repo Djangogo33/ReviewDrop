@@ -83,6 +83,16 @@ function ProjectPage() {
   const [copied, setCopied] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [plan, setPlan] = useState<PlanId>("free");
+  const [mockupUrl, setMockupUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!project?.mockup_image_path) { setMockupUrl(null); return; }
+    supabase.storage.from("mockups").createSignedUrl(project.mockup_image_path, 60 * 60).then(({ data }) => {
+      if (!cancelled) setMockupUrl(data?.signedUrl ?? null);
+    });
+    return () => { cancelled = true; };
+  }, [project?.mockup_image_path]);
 
   useEffect(() => {
     if (!user) return;
@@ -179,9 +189,8 @@ function ProjectPage() {
   if (loading) return <ProjectPageSkeleton />;
   if (!project) return <div className="p-6">Projet introuvable.</div>;
 
-  const mockupUrl = project.mockup_image_path
-    ? supabase.storage.from("mockups").getPublicUrl(project.mockup_image_path).data.publicUrl
-    : null;
+
+
 
   const reviewUrl = typeof window !== "undefined" ? `${window.location.origin}/r/${project.public_token}` : "";
 
