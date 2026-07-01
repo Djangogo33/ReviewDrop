@@ -153,6 +153,12 @@ export const Route = createFileRoute("/api/public/feedback")({
             });
           }
 
+          // Fire-and-forget AI categorization — never blocks the response
+          try {
+            const { categorizeFeedback } = await import("@/lib/categorize.functions");
+            void categorizeFeedback({ data: { feedback_id: inserted.id } }).catch(() => {});
+          } catch { /* categorization is best-effort */ }
+
           return new Response(JSON.stringify({ ok: true, id: inserted.id }), {
             status: 201,
             headers: { "Content-Type": "application/json", ...corsHeaders },
