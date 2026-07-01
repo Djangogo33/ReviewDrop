@@ -189,9 +189,8 @@ function ProjectPage() {
   if (loading) return <ProjectPageSkeleton />;
   if (!project) return <div className="p-6">Projet introuvable.</div>;
 
-  const mockupUrl = project.mockup_image_path
-    ? supabase.storage.from("mockups").getPublicUrl(project.mockup_image_path).data.publicUrl
-    : null;
+
+
 
   const reviewUrl = typeof window !== "undefined" ? `${window.location.origin}/r/${project.public_token}` : "";
 
