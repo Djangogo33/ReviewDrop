@@ -1,82 +1,69 @@
-# Plan — 4 chantiers en série
+## Objectif
 
-Livré dans cet ordre (impact décroissant, dépendances gérées).
+Compléter les fonctionnalités déjà ébauchées pour qu'elles soient toutes utilisables de bout en bout. Les paiements Stripe restent inertes (déjà pilotés par le mode beta).
 
-## 1. Réponses aux feedbacks (fil de discussion)
+## État actuel (audit rapide)
 
-**Base de données**
-- Ajouter `feedbacks.status` (`open` | `in_progress` | `resolved`), défaut `open`.
-- Vérifier RLS sur `feedback_replies` (déjà en place) : lecture/écriture par propriétaire du projet.
-- Activer Realtime sur `feedback_replies`.
+- Onboarding tour : composant + `profiles.onboarded_at` OK, monté dans `DashboardLayout` → ✅ déjà branché.
+- Threads dashboard : UI de réponse existe dans `dashboard.projects.$projectId.tsx` (INSERT dans `feedback_replies`) mais **pas de Realtime** et **pas d'affichage côté visiteur** (`r.$token.tsx` et `widget.js`).
+- Filtres : filtre par statut ✅, filtre par catégorie ❌.
+- Export CSV : ✅ déjà branché.
+- Webhooks : listés comme "inclus beta" mais **aucune table, aucune UI, aucun envoi**.
+- Realtime : activé côté DB pour `feedback_replies` mais non consommé côté UI.
 
-**Dashboard**
-- Dans `dashboard.projects.$projectId.tsx` : panneau latéral au clic sur un feedback avec le fil (auteur = "Vous"), zone de réponse, sélecteur de statut, badge coloré par statut.
-- Filtre en haut de liste : Tous / Ouverts / En cours / Résolus.
+## Ce que je vais livrer
 
-**Widget & page publique `/r/$token`**
-- Widget : au clic sur une épingle existante, tooltip affichant le fil des réponses (lecture seule).
-- `r.$token.tsx` : afficher les réponses sous chaque feedback + statut visible.
+### 1. Threads visibles côté visiteur + Realtime
 
-## 2. Analytics dashboard
+- `r.$token.tsx` : après soumission, garder la référence du feedback créé (renvoyée par `/api/public/feedback`) et afficher la liste des réponses de l'équipe pour ce feedback, avec un abonnement Realtime `postgres_changes` sur `feedback_replies` filtré par `feedback_id`. Petit CTA "Voir les réponses" avec token stocké en `localStorage` pour retrouver les feedbacks postés depuis ce navigateur.
+- `api.public.feedback.ts` : renvoyer `{ id }` du feedback créé (déjà fait à vérifier) ; ajouter un handler `GET /api/public/feedback/:id/replies` (nouveau server route) qui expose uniquement `author_name`, `body`, `created_at` des réponses non-internes via client publishable + policy `TO anon` étroite.
+- Migration : nouvelle colonne `feedback_replies.is_internal boolean default false` + policy anon SELECT restreinte à `is_internal = false`.
+- `dashboard.projects.$projectId.tsx` : abonnement Realtime sur `feedback_replies` du feedback ouvert pour rafraîchir sans reload ; checkbox "Note interne" à la saisie.
+- `public/widget.js` : afficher un message de confirmation avec lien "Suivre ma demande" pointant vers `/r/<token>?f=<feedbackId>`.
 
-Nouvelle route `dashboard.analytics.tsx` (onglet sidebar).
+### 2. Filtres catégorie + statut unifiés
 
-Métriques par projet (ou global) sur 7/30/90 jours :
-- Feedbacks reçus (courbe jour par jour) via `recharts` (déjà dans le stack shadcn).
-- Répartition par statut (donut).
-- Top 5 pages (`page_url`) qui reçoivent des feedbacks.
-- Taux de résolution (% de `resolved` / total).
-- Temps de première réponse moyen.
+- `dashboard.projects.$projectId.tsx` : ajouter un `<select>` catégorie (bug/idée/question/UX/autre/toutes) qui combine avec le filtre statut existant. Compteurs mis à jour.
+- Bouton "Re-catégoriser" sur un feedback qui ré-appelle la server fn `categorize` (déjà existante).
 
-Requêtes : agrégations SQL via `supabase.from("feedbacks").select(...)` filtré côté client (< 10k lignes attendues), pas de RPC nécessaire.
+### 3. Webhooks sortants
 
-## 3. Catégorisation IA des feedbacks
+- Migration : nouvelle table `public.webhooks` (`project_id`, `url`, `secret`, `events text[]`, `is_active`, timestamps) + `webhook_deliveries` (log succès/échec, réponse HTTP tronquée, `attempt_count`). GRANT authenticated + RLS via `projects.owner_id`.
+- Nouvelle page `dashboard.projects.$projectId.webhooks.tsx` : CRUD (URL, secret auto-généré, choix des évènements `feedback.created`, `feedback.status_changed`, `reply.created`), bouton "Envoyer un test", historique des 20 dernières livraisons.
+- Server fn `dispatchWebhook` (`src/lib/webhooks.functions.ts`) : lit les webhooks actifs du projet correspondant à l'évènement, POST JSON signé HMAC-SHA256 (`x-reviewdrop-signature`), timeout 5s, journalise dans `webhook_deliveries`. Appelée en `waitUntil`-style (fire-and-forget) depuis :
+  - `api.public.feedback.ts` après INSERT (`feedback.created`)
+  - `dashboard.projects.$projectId.tsx` via une server fn `updateFeedbackStatus` (nouveau) qui centralise le UPDATE et déclenche `feedback.status_changed`
+  - même approche pour `reply.created`
 
-**Base de données**
-- Ajouter `feedbacks.category` (`bug` | `idea` | `question` | `ux` | `other`) nullable.
-- Ajouter `feedbacks.ai_summary` text nullable (1 phrase).
+### 4. Nettoyage cohérence
 
-**Server function `categorize.functions.ts`**
-- Trigger : à chaque insertion réussie dans `api.public.feedback.ts`, on lance une catégorisation en fond via `createServerFn` (fire-and-forget côté API).
-- Modèle : `google/gemini-3-flash-preview` via Lovable AI Gateway.
-- Prompt structuré (JSON output) → écrit `category` + `ai_summary` sur la ligne.
-
-**UI**
-- Badge de catégorie coloré à côté de chaque feedback dans `dashboard.projects.$projectId.tsx`.
-- Filtres par catégorie (combinables avec statut).
-- Bouton "Re-catégoriser" pour l'utilisateur (Pro/Max).
-
-## 4. Polish UX + onboarding guidé
-
-**Tour interactif première connexion**
-- Petit composant maison (pas de dépendance) : overlay avec 4 bulles pointant vers "Nouveau projet" → "Installer" → "Feedbacks" → "Compte".
-- Skip persistant dans `profiles.onboarded_at`.
-
-**Empty states améliorés**
-- `dashboard.index.tsx` sans projet : illustration + CTA large.
-- Projet sans feedback : déjà en place, on rajoute un lien "Envoyer un feedback de test".
-
-**Micro-animations**
-- Transition d'apparition sur les cartes (fade + slide-up, Tailwind `animate-in`).
-- Toast animé lors d'un nouveau feedback realtime (déjà partiel).
-
-**Raccourcis clavier**
-- `g p` → projets, `g d` → dashboard, `g a` → analytics, `?` → aide.
-- Composant `KeyboardShortcuts` dans le layout.
+- `src/lib/plans.ts` : la liste beta annonce "Domaine personnalisé" — hors scope paiement mais aussi hors scope de cette itération : conserver l'affichage sans code mort supplémentaire.
+- Vérifier que `dashboard.billing` reste en mode beta (aucun changement).
 
 ## Détails techniques
 
-- Toutes les nouvelles routes sous `_authenticated/` ne s'appliquent pas ici (le projet garde le pattern actuel `dashboard.*` avec `RequireAuth` component) — on conserve la convention existante.
-- IA : bien lire `LOVABLE_API_KEY` **dans le handler** (Cloudflare Workers).
-- Realtime : channels avec cleanup dans `useEffect` (pas de fuite).
-- Migrations : une seule par chantier, GRANTs inclus.
+- Nouveaux fichiers :
+  - `src/routes/dashboard.projects.$projectId.webhooks.tsx`
+  - `src/routes/api.public.feedback-replies.$id.ts` (GET public restreint)
+  - `src/lib/webhooks.functions.ts` (`listWebhooks`, `upsertWebhook`, `deleteWebhook`, `sendTestWebhook`, `dispatchEvent`)
+- Migration unique :
+  - `feedback_replies.is_internal boolean not null default false`
+  - policy anon `SELECT` sur `feedback_replies` filtrée `is_internal = false`
+  - `CREATE TABLE public.webhooks` + GRANT + RLS (owner via `projects.owner_id`)
+  - `CREATE TABLE public.webhook_deliveries` + GRANT + RLS lecture seule owner
+- Realtime : `ALTER PUBLICATION supabase_realtime ADD TABLE public.feedback_replies` (à ajouter si absent).
+- Signature HMAC : `crypto.createHmac('sha256', secret).update(rawBody).digest('hex')`, préfixe `sha256=`.
+- Toutes les nouvelles routes dashboard sont protégées par `RequireAuth` + `DashboardLayout` (pattern existant).
 
-## Ordre de livraison
+## Hors scope explicite
 
-1. Migration (status + category + ai_summary + onboarded_at) — une seule, tout en un.
-2. Chantier 1 (réponses) — le plus attendu.
-3. Chantier 3 (IA) — court, apporte du "wow".
-4. Chantier 2 (analytics) — visuel, valorisant.
-5. Chantier 4 (polish) — finition.
+- Toute activation Stripe / portail client / prix / limites payantes → paiements gelés en beta comme demandé.
+- Domaine personnalisé du widget.
 
-Je peux tout enchaîner sans validation intermédiaire, ou t'arrêter après chaque chantier pour que tu testes. Dis-moi.
+## Ordre d'exécution
+
+1. Migration DB (threads privés + webhooks + realtime replies).
+2. Threads visibles + Realtime (dashboard + r.$token + widget.js).
+3. Filtre catégorie + re-catégoriser.
+4. Webhooks (server fn, UI, dispatch depuis les 3 évènements).
+5. Passage rapide QA sur les parcours principaux.
