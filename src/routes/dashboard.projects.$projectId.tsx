@@ -519,7 +519,7 @@ function FeedbackDetail({
         author_name: user.email,
         message: newReply.trim(),
         is_internal: isInternal,
-      } as never)
+      })
       .select()
       .single();
     if (error) {
