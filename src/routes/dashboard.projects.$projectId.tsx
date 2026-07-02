@@ -388,9 +388,11 @@ function ProjectPage() {
           ) : selected ? (
             <FeedbackDetail
               feedback={selected}
+              projectId={projectId}
               onBack={() => setSelectedId(null)}
               onStatusChange={(s) => updateStatus(selected.id, s)}
               onDelete={() => deleteFeedback(selected.id)}
+              onRecategorize={() => runRecategorize(selected.id)}
             />
           ) : (
             filtered.map((f) => (
