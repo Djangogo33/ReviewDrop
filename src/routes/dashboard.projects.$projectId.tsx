@@ -176,9 +176,25 @@ function ProjectPage() {
     return c;
   }, [feedbacks]);
 
+  const emitEvent = useServerFn(emitProjectEvent);
+  const recategorize = useServerFn(categorizeFeedback);
+
   const updateStatus = async (id: string, status: string) => {
     const { error } = await supabase.from("feedbacks").update({ status }).eq("id", id);
-    if (error) toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
+    void emitEvent({
+      data: { project_id: projectId, event: "feedback.status_changed", payload: { id, status } },
+    }).catch(() => {});
+  };
+
+  const runRecategorize = async (id: string) => {
+    toast.info("Analyse en cours…");
+    try {
+      await recategorize({ data: { feedback_id: id } });
+      toast.success("Feedback re-catégorisé");
+    } catch {
+      toast.error("Échec de la catégorisation");
+    }
   };
 
   const deleteFeedback = async (id: string) => {
