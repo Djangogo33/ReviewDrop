@@ -616,28 +616,53 @@ function FeedbackDetail({
         </div>
       )}
 
-      {/* Internal notes */}
+      {/* Notes & réponses */}
       <div className="border-t border-border pt-4">
-        <p className="text-xs font-medium mb-2">Notes internes</p>
+        <p className="text-xs font-medium mb-2">Notes & réponses</p>
         {replies.length > 0 && (
           <div className="space-y-2 mb-3">
-            {replies.map((r) => (
-              <div key={r.id} className="text-sm bg-muted/50 rounded p-2">
-                <p className="whitespace-pre-wrap">{r.message}</p>
-                <p className="text-xs text-muted-foreground mt-1">{new Date(r.created_at).toLocaleString("fr-FR")}</p>
-              </div>
-            ))}
+            {replies.map((r) => {
+              const internal = (r as Reply & { is_internal?: boolean }).is_internal;
+              return (
+                <div
+                  key={r.id}
+                  className={`text-sm rounded p-2 ${internal ? "bg-amber-50 border border-amber-200" : "bg-primary/5 border border-primary/20"}`}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[10px] uppercase tracking-wide font-medium text-muted-foreground">
+                      {internal ? "🔒 Note interne" : "💬 Réponse publique"}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground">
+                      {new Date(r.created_at).toLocaleString("fr-FR")}
+                    </span>
+                  </div>
+                  <p className="whitespace-pre-wrap">{r.message}</p>
+                </div>
+              );
+            })}
           </div>
         )}
         <form onSubmit={submitReply} className="space-y-2">
           <Textarea
             value={newReply}
             onChange={(e) => setNewReply(e.target.value)}
-            placeholder="Ajouter une note..."
+            placeholder={isInternal ? "Note visible uniquement par votre équipe…" : "Message visible par le visiteur…"}
             rows={2}
             className="text-sm"
           />
-          <Button type="submit" size="sm" disabled={!newReply.trim()}>Ajouter</Button>
+          <div className="flex items-center justify-between">
+            <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
+              <input
+                type="checkbox"
+                checked={isInternal}
+                onChange={(e) => setIsInternal(e.target.checked)}
+              />
+              Note interne (non visible côté visiteur)
+            </label>
+            <Button type="submit" size="sm" disabled={!newReply.trim()}>
+              {isInternal ? "Ajouter" : "Répondre"}
+            </Button>
+          </div>
         </form>
       </div>
     </div>
