@@ -553,6 +553,27 @@ function FeedbackDetail({
           </button>
         </div>
         <p className="text-sm whitespace-pre-wrap">{feedback.message}</p>
+        {(feedback as Feedback & { ai_summary?: string | null }).ai_summary && (
+          <p className="mt-2 text-xs italic text-muted-foreground">
+            ✨ {(feedback as Feedback & { ai_summary?: string | null }).ai_summary}
+          </p>
+        )}
+        <div className="mt-2 flex items-center gap-2">
+          {(feedback as Feedback & { category?: string | null }).category ? (
+            <span className="text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
+              {CATEGORY_LABEL[(feedback as Feedback & { category?: string | null }).category as string] ??
+                (feedback as Feedback & { category?: string | null }).category}
+            </span>
+          ) : (
+            <span className="text-[10px] uppercase tracking-wide text-muted-foreground">Non catégorisé</span>
+          )}
+          <button
+            onClick={onRecategorize}
+            className="inline-flex items-center gap-1 text-[11px] text-primary hover:underline"
+          >
+            <Sparkles className="h-3 w-3" /> Re-catégoriser
+          </button>
+        </div>
         <p className="mt-2 text-xs text-muted-foreground">{new Date(feedback.created_at).toLocaleString("fr-FR")}</p>
       </div>
 
