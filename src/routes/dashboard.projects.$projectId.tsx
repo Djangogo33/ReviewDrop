@@ -301,7 +301,7 @@ function ProjectPage() {
       </div>
 
       {/* Filters */}
-      <div className="flex gap-2 mb-4 flex-wrap">
+      <div className="flex gap-2 mb-4 flex-wrap items-center">
         {[
           { key: "all", label: `Tous (${feedbacks.length})` },
           { key: "open", label: `Ouverts (${counts.open})` },
@@ -320,6 +320,18 @@ function ProjectPage() {
             {f.label}
           </button>
         ))}
+        <select
+          value={categoryFilter}
+          onChange={(e) => setCategoryFilter(e.target.value)}
+          className="text-xs rounded-full border border-border bg-card px-3 py-1.5 hover:bg-muted ml-auto"
+          aria-label="Filtrer par catégorie"
+        >
+          <option value="all">Toutes catégories</option>
+          {Object.entries(CATEGORY_LABEL).map(([k, v]) => (
+            <option key={k} value={k}>{v}</option>
+          ))}
+          <option value="uncategorized">Non catégorisé</option>
+        </select>
       </div>
 
       {feedbacks.length === 0 ? (
