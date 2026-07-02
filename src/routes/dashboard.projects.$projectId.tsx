@@ -154,8 +154,16 @@ function ProjectPage() {
   }, [projectId, user]);
 
   const filtered = useMemo(
-    () => (statusFilter === "all" ? feedbacks : feedbacks.filter((f) => f.status === statusFilter)),
-    [feedbacks, statusFilter]
+    () =>
+      feedbacks.filter((f) => {
+        if (statusFilter !== "all" && f.status !== statusFilter) return false;
+        if (categoryFilter !== "all") {
+          const cat = (f as Feedback & { category?: string | null }).category ?? "uncategorized";
+          if (cat !== categoryFilter) return false;
+        }
+        return true;
+      }),
+    [feedbacks, statusFilter, categoryFilter],
   );
 
   const selected = feedbacks.find((f) => f.id === selectedId) ?? null;
