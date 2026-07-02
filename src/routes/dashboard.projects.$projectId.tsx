@@ -38,6 +38,14 @@ const STATUS_LABEL: Record<string, string> = {
   resolved: "Résolu",
 };
 
+const CATEGORY_LABEL: Record<string, string> = {
+  bug: "Bug",
+  idea: "Idée",
+  question: "Question",
+  ux: "UX",
+  other: "Autre",
+};
+
 function csvEscape(v: unknown): string {
   if (v === null || v === undefined) return "";
   const s = String(v).replace(/\r?\n/g, " ");
