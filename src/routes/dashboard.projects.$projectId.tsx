@@ -9,10 +9,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { ArrowLeft, Copy, Check, Trash2, Settings, ExternalLink, Download, Lock, Inbox } from "lucide-react";
+import { ArrowLeft, Copy, Check, Trash2, Settings, ExternalLink, Download, Lock, Inbox, Webhook, Sparkles } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Tables } from "@/integrations/supabase/types";
 import { getLimits, normalizePlan, type PlanId, DEFAULT_BRAND_COLOR } from "@/lib/plans";
+import { useServerFn } from "@tanstack/react-start";
+import { categorizeFeedback } from "@/lib/categorize.functions";
+import { emitProjectEvent } from "@/lib/webhooks.functions";
 
 type Project = Tables<"projects">;
 type Feedback = Tables<"feedbacks">;
