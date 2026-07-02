@@ -90,6 +90,7 @@ function ProjectPage() {
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
