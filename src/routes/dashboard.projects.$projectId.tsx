@@ -255,6 +255,11 @@ function ProjectPage() {
               </Button>
             </Link>
           )}
+          <Link to="/dashboard/projects/$projectId/webhooks" params={{ projectId }}>
+            <Button variant="outline" size="sm">
+              <Webhook className="h-4 w-4 mr-2" /> Webhooks
+            </Button>
+          </Link>
           <Button variant="outline" size="sm" onClick={() => setShowSettings((s) => !s)}>
             <Settings className="h-4 w-4 mr-2" /> Paramètres
           </Button>
