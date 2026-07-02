@@ -255,7 +255,7 @@ function ProjectPage() {
               </Button>
             </Link>
           )}
-          <Link to="/dashboard/projects/$projectId/webhooks" params={{ projectId }}>
+          <Link to="/dashboard/webhooks/$projectId" params={{ projectId }}>
             <Button variant="outline" size="sm">
               <Webhook className="h-4 w-4 mr-2" /> Webhooks
             </Button>
