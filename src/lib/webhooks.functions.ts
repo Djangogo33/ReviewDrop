@@ -136,3 +136,22 @@ export const sendTestWebhook = createServerFn({ method: "POST" })
     });
     return { ok: true };
   });
+
+// --- Emit a project event (called from dashboard after a successful write)
+export const emitProjectEvent = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        project_id: z.string().uuid(),
+        event: z.enum(WEBHOOK_EVENTS),
+        payload: z.record(z.any()),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertOwner(context.supabase, context.userId, data.project_id);
+    const { dispatchWebhookEvent } = await import("./webhooks.server");
+    await dispatchWebhookEvent(data.project_id, data.event, data.payload);
+    return { ok: true };
+  });
