@@ -35,6 +35,7 @@ import { Route as DashboardAdminUsersRouteImport } from './routes/dashboard.admi
 import { Route as DashboardAdminCodesRouteImport } from './routes/dashboard.admin.codes'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api.public.stripe-webhook'
 import { Route as ApiPublicFeedbackRouteImport } from './routes/api.public.feedback'
+import { Route as DashboardProjectsProjectIdWebhooksRouteImport } from './routes/dashboard.projects.$projectId.webhooks'
 import { Route as ApiPublicWidgetConfigTokenRouteImport } from './routes/api.public.widget-config.$token'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -168,6 +169,12 @@ const ApiPublicFeedbackRoute = ApiPublicFeedbackRouteImport.update({
   path: '/api/public/feedback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardProjectsProjectIdWebhooksRoute =
+  DashboardProjectsProjectIdWebhooksRouteImport.update({
+    id: '/webhooks',
+    path: '/webhooks',
+    getParentRoute: () => DashboardProjectsProjectIdRoute,
+  } as any)
 const ApiPublicWidgetConfigTokenRoute =
   ApiPublicWidgetConfigTokenRouteImport.update({
     id: '/api/public/widget-config/$token',
@@ -200,9 +207,10 @@ export interface FileRoutesByFullPath {
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/dashboard/admin/codes': typeof DashboardAdminCodesRoute
   '/dashboard/admin/users': typeof DashboardAdminUsersRoute
-  '/dashboard/projects/$projectId': typeof DashboardProjectsProjectIdRoute
+  '/dashboard/projects/$projectId': typeof DashboardProjectsProjectIdRouteWithChildren
   '/dashboard/projects/new': typeof DashboardProjectsNewRoute
   '/api/public/widget-config/$token': typeof ApiPublicWidgetConfigTokenRoute
+  '/dashboard/projects/$projectId/webhooks': typeof DashboardProjectsProjectIdWebhooksRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -229,9 +237,10 @@ export interface FileRoutesByTo {
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/dashboard/admin/codes': typeof DashboardAdminCodesRoute
   '/dashboard/admin/users': typeof DashboardAdminUsersRoute
-  '/dashboard/projects/$projectId': typeof DashboardProjectsProjectIdRoute
+  '/dashboard/projects/$projectId': typeof DashboardProjectsProjectIdRouteWithChildren
   '/dashboard/projects/new': typeof DashboardProjectsNewRoute
   '/api/public/widget-config/$token': typeof ApiPublicWidgetConfigTokenRoute
+  '/dashboard/projects/$projectId/webhooks': typeof DashboardProjectsProjectIdWebhooksRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -259,9 +268,10 @@ export interface FileRoutesById {
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/dashboard/admin/codes': typeof DashboardAdminCodesRoute
   '/dashboard/admin/users': typeof DashboardAdminUsersRoute
-  '/dashboard/projects/$projectId': typeof DashboardProjectsProjectIdRoute
+  '/dashboard/projects/$projectId': typeof DashboardProjectsProjectIdRouteWithChildren
   '/dashboard/projects/new': typeof DashboardProjectsNewRoute
   '/api/public/widget-config/$token': typeof ApiPublicWidgetConfigTokenRoute
+  '/dashboard/projects/$projectId/webhooks': typeof DashboardProjectsProjectIdWebhooksRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -293,6 +303,7 @@ export interface FileRouteTypes {
     | '/dashboard/projects/$projectId'
     | '/dashboard/projects/new'
     | '/api/public/widget-config/$token'
+    | '/dashboard/projects/$projectId/webhooks'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -322,6 +333,7 @@ export interface FileRouteTypes {
     | '/dashboard/projects/$projectId'
     | '/dashboard/projects/new'
     | '/api/public/widget-config/$token'
+    | '/dashboard/projects/$projectId/webhooks'
   id:
     | '__root__'
     | '/'
@@ -351,6 +363,7 @@ export interface FileRouteTypes {
     | '/dashboard/projects/$projectId'
     | '/dashboard/projects/new'
     | '/api/public/widget-config/$token'
+    | '/dashboard/projects/$projectId/webhooks'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -376,7 +389,7 @@ export interface RootRouteChildren {
   DashboardIndexRoute: typeof DashboardIndexRoute
   ApiPublicFeedbackRoute: typeof ApiPublicFeedbackRoute
   ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
-  DashboardProjectsProjectIdRoute: typeof DashboardProjectsProjectIdRoute
+  DashboardProjectsProjectIdRoute: typeof DashboardProjectsProjectIdRouteWithChildren
   DashboardProjectsNewRoute: typeof DashboardProjectsNewRoute
   ApiPublicWidgetConfigTokenRoute: typeof ApiPublicWidgetConfigTokenRoute
 }
@@ -565,6 +578,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicFeedbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/projects/$projectId/webhooks': {
+      id: '/dashboard/projects/$projectId/webhooks'
+      path: '/webhooks'
+      fullPath: '/dashboard/projects/$projectId/webhooks'
+      preLoaderRoute: typeof DashboardProjectsProjectIdWebhooksRouteImport
+      parentRoute: typeof DashboardProjectsProjectIdRoute
+    }
     '/api/public/widget-config/$token': {
       id: '/api/public/widget-config/$token'
       path: '/api/public/widget-config/$token'
@@ -589,6 +609,21 @@ const DashboardAdminRouteWithChildren = DashboardAdminRoute._addFileChildren(
   DashboardAdminRouteChildren,
 )
 
+interface DashboardProjectsProjectIdRouteChildren {
+  DashboardProjectsProjectIdWebhooksRoute: typeof DashboardProjectsProjectIdWebhooksRoute
+}
+
+const DashboardProjectsProjectIdRouteChildren: DashboardProjectsProjectIdRouteChildren =
+  {
+    DashboardProjectsProjectIdWebhooksRoute:
+      DashboardProjectsProjectIdWebhooksRoute,
+  }
+
+const DashboardProjectsProjectIdRouteWithChildren =
+  DashboardProjectsProjectIdRoute._addFileChildren(
+    DashboardProjectsProjectIdRouteChildren,
+  )
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ChangelogRoute: ChangelogRoute,
@@ -612,7 +647,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardIndexRoute: DashboardIndexRoute,
   ApiPublicFeedbackRoute: ApiPublicFeedbackRoute,
   ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
-  DashboardProjectsProjectIdRoute: DashboardProjectsProjectIdRoute,
+  DashboardProjectsProjectIdRoute: DashboardProjectsProjectIdRouteWithChildren,
   DashboardProjectsNewRoute: DashboardProjectsNewRoute,
   ApiPublicWidgetConfigTokenRoute: ApiPublicWidgetConfigTokenRoute,
 }
