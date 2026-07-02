@@ -442,28 +442,52 @@ function ProjectPage() {
 
 function FeedbackDetail({
   feedback,
+  projectId,
   onBack,
   onStatusChange,
   onDelete,
+  onRecategorize,
 }: {
   feedback: Feedback;
+  projectId: string;
   onBack: () => void;
   onStatusChange: (s: string) => void;
   onDelete: () => void;
+  onRecategorize: () => void;
 }) {
   const { user } = useAuth();
   const [replies, setReplies] = useState<Reply[]>([]);
   const [newReply, setNewReply] = useState("");
+  const [isInternal, setIsInternal] = useState(true);
+  const emitEvent = useServerFn(emitProjectEvent);
 
   useEffect(() => {
+    let mounted = true;
     (async () => {
       const { data } = await supabase
         .from("feedback_replies")
         .select("*")
         .eq("feedback_id", feedback.id)
         .order("created_at", { ascending: true });
-      setReplies(data || []);
+      if (mounted) setReplies(data || []);
     })();
+
+    const channel = supabase
+      .channel(`replies-${feedback.id}`)
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "feedback_replies", filter: `feedback_id=eq.${feedback.id}` },
+        (payload) => {
+          const r = payload.new as Reply;
+          setReplies((prev) => (prev.some((x) => x.id === r.id) ? prev : [...prev, r]));
+        },
+      )
+      .subscribe();
+
+    return () => {
+      mounted = false;
+      supabase.removeChannel(channel);
+    };
   }, [feedback.id]);
 
   const [screenshotUrl, setScreenshotUrl] = useState<string | null>(null);
@@ -494,14 +518,26 @@ function FeedbackDetail({
         author_id: user.id,
         author_name: user.email,
         message: newReply.trim(),
-      })
+        is_internal: isInternal,
+      } as never)
       .select()
       .single();
     if (error) {
       toast.error(error.message);
     } else if (data) {
-      setReplies((r) => [...r, data]);
+      setReplies((r) => (r.some((x) => x.id === data.id) ? r : [...r, data]));
       setNewReply("");
+      if (!isInternal) {
+        void emitEvent({
+          data: {
+            project_id: projectId,
+            event: "reply.created",
+            payload: { feedback_id: feedback.id, reply_id: data.id, message: data.message },
+          },
+        }).catch(() => {});
+      }
+    }
+  };
     }
   };
 
