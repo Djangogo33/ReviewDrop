@@ -159,6 +159,19 @@ export const Route = createFileRoute("/api/public/feedback")({
             void categorizeFeedback({ data: { feedback_id: inserted.id } }).catch(() => {});
           } catch { /* categorization is best-effort */ }
 
+          // Fire-and-forget webhook dispatch
+          try {
+            const { dispatchWebhookEvent } = await import("@/lib/webhooks.server");
+            void dispatchWebhookEvent(project.id, "feedback.created", {
+              id: inserted.id,
+              project_id: project.id,
+              author_name: inserted.author_name,
+              message: inserted.message,
+              page_url: inserted.page_url,
+              created_at: inserted.created_at,
+            }).catch(() => {});
+          } catch { /* best-effort */ }
+
           return new Response(JSON.stringify({ ok: true, id: inserted.id }), {
             status: 201,
             headers: { "Content-Type": "application/json", ...corsHeaders },

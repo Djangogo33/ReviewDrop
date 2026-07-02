@@ -9,10 +9,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { ArrowLeft, Copy, Check, Trash2, Settings, ExternalLink, Download, Lock, Inbox } from "lucide-react";
+import { ArrowLeft, Copy, Check, Trash2, Settings, ExternalLink, Download, Lock, Inbox, Webhook, Sparkles } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Tables } from "@/integrations/supabase/types";
 import { getLimits, normalizePlan, type PlanId, DEFAULT_BRAND_COLOR } from "@/lib/plans";
+import { useServerFn } from "@tanstack/react-start";
+import { categorizeFeedback } from "@/lib/categorize.functions";
+import { emitProjectEvent } from "@/lib/webhooks.functions";
 
 type Project = Tables<"projects">;
 type Feedback = Tables<"feedbacks">;
@@ -33,6 +36,14 @@ const STATUS_LABEL: Record<string, string> = {
   open: "Ouvert",
   in_progress: "En cours",
   resolved: "Résolu",
+};
+
+const CATEGORY_LABEL: Record<string, string> = {
+  bug: "Bug",
+  idea: "Idée",
+  question: "Question",
+  ux: "UX",
+  other: "Autre",
 };
 
 function csvEscape(v: unknown): string {
@@ -79,6 +90,7 @@ function ProjectPage() {
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -142,8 +154,16 @@ function ProjectPage() {
   }, [projectId, user]);
 
   const filtered = useMemo(
-    () => (statusFilter === "all" ? feedbacks : feedbacks.filter((f) => f.status === statusFilter)),
-    [feedbacks, statusFilter]
+    () =>
+      feedbacks.filter((f) => {
+        if (statusFilter !== "all" && f.status !== statusFilter) return false;
+        if (categoryFilter !== "all") {
+          const cat = (f as Feedback & { category?: string | null }).category ?? "uncategorized";
+          if (cat !== categoryFilter) return false;
+        }
+        return true;
+      }),
+    [feedbacks, statusFilter, categoryFilter],
   );
 
   const selected = feedbacks.find((f) => f.id === selectedId) ?? null;
@@ -156,9 +176,25 @@ function ProjectPage() {
     return c;
   }, [feedbacks]);
 
+  const emitEvent = useServerFn(emitProjectEvent);
+  const recategorize = useServerFn(categorizeFeedback);
+
   const updateStatus = async (id: string, status: string) => {
     const { error } = await supabase.from("feedbacks").update({ status }).eq("id", id);
-    if (error) toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
+    void emitEvent({
+      data: { project_id: projectId, event: "feedback.status_changed", payload: { id, status } },
+    }).catch(() => {});
+  };
+
+  const runRecategorize = async (id: string) => {
+    toast.info("Analyse en cours…");
+    try {
+      await recategorize({ data: { feedback_id: id } });
+      toast.success("Feedback re-catégorisé");
+    } catch {
+      toast.error("Échec de la catégorisation");
+    }
   };
 
   const deleteFeedback = async (id: string) => {
@@ -219,6 +255,11 @@ function ProjectPage() {
               </Button>
             </Link>
           )}
+          <Link to="/dashboard/webhooks/$projectId" params={{ projectId }}>
+            <Button variant="outline" size="sm">
+              <Webhook className="h-4 w-4 mr-2" /> Webhooks
+            </Button>
+          </Link>
           <Button variant="outline" size="sm" onClick={() => setShowSettings((s) => !s)}>
             <Settings className="h-4 w-4 mr-2" /> Paramètres
           </Button>
@@ -260,7 +301,7 @@ function ProjectPage() {
       </div>
 
       {/* Filters */}
-      <div className="flex gap-2 mb-4 flex-wrap">
+      <div className="flex gap-2 mb-4 flex-wrap items-center">
         {[
           { key: "all", label: `Tous (${feedbacks.length})` },
           { key: "open", label: `Ouverts (${counts.open})` },
@@ -279,6 +320,18 @@ function ProjectPage() {
             {f.label}
           </button>
         ))}
+        <select
+          value={categoryFilter}
+          onChange={(e) => setCategoryFilter(e.target.value)}
+          className="text-xs rounded-full border border-border bg-card px-3 py-1.5 hover:bg-muted ml-auto"
+          aria-label="Filtrer par catégorie"
+        >
+          <option value="all">Toutes catégories</option>
+          {Object.entries(CATEGORY_LABEL).map(([k, v]) => (
+            <option key={k} value={k}>{v}</option>
+          ))}
+          <option value="uncategorized">Non catégorisé</option>
+        </select>
       </div>
 
       {feedbacks.length === 0 ? (
@@ -335,9 +388,11 @@ function ProjectPage() {
           ) : selected ? (
             <FeedbackDetail
               feedback={selected}
+              projectId={projectId}
               onBack={() => setSelectedId(null)}
               onStatusChange={(s) => updateStatus(selected.id, s)}
               onDelete={() => deleteFeedback(selected.id)}
+              onRecategorize={() => runRecategorize(selected.id)}
             />
           ) : (
             filtered.map((f) => (
@@ -387,28 +442,52 @@ function ProjectPage() {
 
 function FeedbackDetail({
   feedback,
+  projectId,
   onBack,
   onStatusChange,
   onDelete,
+  onRecategorize,
 }: {
   feedback: Feedback;
+  projectId: string;
   onBack: () => void;
   onStatusChange: (s: string) => void;
   onDelete: () => void;
+  onRecategorize: () => void;
 }) {
   const { user } = useAuth();
   const [replies, setReplies] = useState<Reply[]>([]);
   const [newReply, setNewReply] = useState("");
+  const [isInternal, setIsInternal] = useState(true);
+  const emitEvent = useServerFn(emitProjectEvent);
 
   useEffect(() => {
+    let mounted = true;
     (async () => {
       const { data } = await supabase
         .from("feedback_replies")
         .select("*")
         .eq("feedback_id", feedback.id)
         .order("created_at", { ascending: true });
-      setReplies(data || []);
+      if (mounted) setReplies(data || []);
     })();
+
+    const channel = supabase
+      .channel(`replies-${feedback.id}`)
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "feedback_replies", filter: `feedback_id=eq.${feedback.id}` },
+        (payload) => {
+          const r = payload.new as Reply;
+          setReplies((prev) => (prev.some((x) => x.id === r.id) ? prev : [...prev, r]));
+        },
+      )
+      .subscribe();
+
+    return () => {
+      mounted = false;
+      supabase.removeChannel(channel);
+    };
   }, [feedback.id]);
 
   const [screenshotUrl, setScreenshotUrl] = useState<string | null>(null);
@@ -439,14 +518,24 @@ function FeedbackDetail({
         author_id: user.id,
         author_name: user.email,
         message: newReply.trim(),
+        is_internal: isInternal,
       })
       .select()
       .single();
     if (error) {
       toast.error(error.message);
     } else if (data) {
-      setReplies((r) => [...r, data]);
+      setReplies((r) => (r.some((x) => x.id === data.id) ? r : [...r, data]));
       setNewReply("");
+      if (!isInternal) {
+        void emitEvent({
+          data: {
+            project_id: projectId,
+            event: "reply.created",
+            payload: { feedback_id: feedback.id, reply_id: data.id, message: data.message },
+          },
+        }).catch(() => {});
+      }
     }
   };
 
@@ -464,6 +553,27 @@ function FeedbackDetail({
           </button>
         </div>
         <p className="text-sm whitespace-pre-wrap">{feedback.message}</p>
+        {(feedback as Feedback & { ai_summary?: string | null }).ai_summary && (
+          <p className="mt-2 text-xs italic text-muted-foreground">
+            ✨ {(feedback as Feedback & { ai_summary?: string | null }).ai_summary}
+          </p>
+        )}
+        <div className="mt-2 flex items-center gap-2">
+          {(feedback as Feedback & { category?: string | null }).category ? (
+            <span className="text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
+              {CATEGORY_LABEL[(feedback as Feedback & { category?: string | null }).category as string] ??
+                (feedback as Feedback & { category?: string | null }).category}
+            </span>
+          ) : (
+            <span className="text-[10px] uppercase tracking-wide text-muted-foreground">Non catégorisé</span>
+          )}
+          <button
+            onClick={onRecategorize}
+            className="inline-flex items-center gap-1 text-[11px] text-primary hover:underline"
+          >
+            <Sparkles className="h-3 w-3" /> Re-catégoriser
+          </button>
+        </div>
         <p className="mt-2 text-xs text-muted-foreground">{new Date(feedback.created_at).toLocaleString("fr-FR")}</p>
       </div>
 
@@ -506,28 +616,53 @@ function FeedbackDetail({
         </div>
       )}
 
-      {/* Internal notes */}
+      {/* Notes & réponses */}
       <div className="border-t border-border pt-4">
-        <p className="text-xs font-medium mb-2">Notes internes</p>
+        <p className="text-xs font-medium mb-2">Notes & réponses</p>
         {replies.length > 0 && (
           <div className="space-y-2 mb-3">
-            {replies.map((r) => (
-              <div key={r.id} className="text-sm bg-muted/50 rounded p-2">
-                <p className="whitespace-pre-wrap">{r.message}</p>
-                <p className="text-xs text-muted-foreground mt-1">{new Date(r.created_at).toLocaleString("fr-FR")}</p>
-              </div>
-            ))}
+            {replies.map((r) => {
+              const internal = (r as Reply & { is_internal?: boolean }).is_internal;
+              return (
+                <div
+                  key={r.id}
+                  className={`text-sm rounded p-2 ${internal ? "bg-amber-50 border border-amber-200" : "bg-primary/5 border border-primary/20"}`}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[10px] uppercase tracking-wide font-medium text-muted-foreground">
+                      {internal ? "🔒 Note interne" : "💬 Réponse publique"}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground">
+                      {new Date(r.created_at).toLocaleString("fr-FR")}
+                    </span>
+                  </div>
+                  <p className="whitespace-pre-wrap">{r.message}</p>
+                </div>
+              );
+            })}
           </div>
         )}
         <form onSubmit={submitReply} className="space-y-2">
           <Textarea
             value={newReply}
             onChange={(e) => setNewReply(e.target.value)}
-            placeholder="Ajouter une note..."
+            placeholder={isInternal ? "Note visible uniquement par votre équipe…" : "Message visible par le visiteur…"}
             rows={2}
             className="text-sm"
           />
-          <Button type="submit" size="sm" disabled={!newReply.trim()}>Ajouter</Button>
+          <div className="flex items-center justify-between">
+            <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
+              <input
+                type="checkbox"
+                checked={isInternal}
+                onChange={(e) => setIsInternal(e.target.checked)}
+              />
+              Note interne (non visible côté visiteur)
+            </label>
+            <Button type="submit" size="sm" disabled={!newReply.trim()}>
+              {isInternal ? "Ajouter" : "Répondre"}
+            </Button>
+          </div>
         </form>
       </div>
     </div>
