@@ -17,7 +17,7 @@ import {
   type WebhookEvent,
 } from "@/lib/webhooks.functions";
 
-export const Route = createFileRoute("/dashboard/projects/$projectId/webhooks")({
+export const Route = createFileRoute("/dashboard/webhooks/$projectId")({
   head: () => ({ meta: [{ title: "Webhooks — ReviewDrop" }, { name: "robots", content: "noindex" }] }),
   component: () => (
     <RequireAuth>
