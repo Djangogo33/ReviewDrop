@@ -7,7 +7,24 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { ArrowLeft, Copy, Trash2, Send, Webhook } from "lucide-react";
+import { ArrowLeft, Copy, Trash2, Send, Webhook, ExternalLink } from "lucide-react";
+
+function detectKind(url: string): "discord" | "slack" | "generic" {
+  const u = (url || "").toLowerCase();
+  if (u.includes("discord.com/api/webhooks") || u.includes("discordapp.com/api/webhooks")) return "discord";
+  if (u.includes("hooks.slack.com/")) return "slack";
+  return "generic";
+}
+const KIND_STYLE: Record<string, string> = {
+  discord: "bg-indigo-100 text-indigo-700",
+  slack: "bg-emerald-100 text-emerald-700",
+  generic: "bg-muted text-muted-foreground",
+};
+const KIND_LABEL: Record<string, string> = {
+  discord: "Discord",
+  slack: "Slack",
+  generic: "Générique",
+};
 import {
   listWebhooks,
   createWebhook,
@@ -172,10 +189,27 @@ function WebhooksPage() {
         <div>
           <h1 className="text-2xl font-bold">Webhooks</h1>
           <p className="text-sm text-muted-foreground">
-            Recevez une requête HTTP à chaque événement (feedback, statut, réponse). Chaque envoi est signé
-            (<code className="text-xs bg-muted px-1 rounded">x-reviewdrop-signature</code>).
+            Recevez une notification à chaque événement (feedback, statut, réponse).
+            Compatible <strong>Discord</strong>, <strong>Slack</strong> ou tout endpoint HTTP.
           </p>
         </div>
+      </div>
+
+      <div className="mb-6 rounded-lg border border-border bg-muted/40 p-4 text-sm space-y-2">
+        <p className="font-medium">Connecter Discord en 30 secondes</p>
+        <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
+          <li>Dans votre serveur Discord : <em>Paramètres du salon → Intégrations → Webhooks → Nouveau webhook</em>.</li>
+          <li>Copier l'URL du webhook.</li>
+          <li>La coller ci-dessous — le format Discord est appliqué automatiquement.</li>
+        </ol>
+        <a
+          href="https://support.discord.com/hc/fr/articles/228383668-Intro-to-Webhooks"
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-1 text-primary hover:underline text-xs"
+        >
+          Documentation Discord <ExternalLink className="h-3 w-3" />
+        </a>
       </div>
 
       <form
@@ -189,11 +223,19 @@ function WebhooksPage() {
             id="wh-url"
             type="url"
             required
-            placeholder="https://exemple.com/hooks/reviewdrop"
+            placeholder="https://discord.com/api/webhooks/... ou votre endpoint"
             value={newUrl}
             onChange={(e) => setNewUrl(e.target.value)}
             className="mt-1"
           />
+          {newUrl.trim() && (
+            <p className="mt-1 text-[11px] text-muted-foreground">
+              Format détecté :{" "}
+              <span className={`px-1.5 py-0.5 rounded ${KIND_STYLE[detectKind(newUrl)]}`}>
+                {KIND_LABEL[detectKind(newUrl)]}
+              </span>
+            </p>
+          )}
         </div>
         <div>
           <Label>Événements</Label>
@@ -237,11 +279,17 @@ function WebhooksPage() {
         <div className="space-y-4">
           {hooks.map((h) => {
             const hookDeliveries = deliveries.filter((d) => d.webhook_id === h.id).slice(0, 5);
+            const kind = detectKind(h.url);
             return (
               <div key={h.id} className="rounded-lg border border-border bg-card p-5 space-y-3">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
-                    <p className="font-medium text-sm break-all">{h.url}</p>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className={`text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded ${KIND_STYLE[kind]}`}>
+                        {KIND_LABEL[kind]}
+                      </span>
+                      <p className="font-medium text-sm break-all">{h.url}</p>
+                    </div>
                     <p className="text-xs text-muted-foreground mt-1">
                       Créé le {new Date(h.created_at).toLocaleDateString("fr-FR")}
                     </p>
@@ -286,17 +334,23 @@ function WebhooksPage() {
                   </div>
                 </div>
 
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">
-                    Secret de signature (à conserver, sert à vérifier <code className="text-xs bg-muted px-1 rounded">x-reviewdrop-signature</code>)
-                  </p>
-                  <div className="flex gap-2">
-                    <code className="flex-1 text-xs bg-muted p-2 rounded font-mono truncate">{h.secret}</code>
-                    <Button variant="outline" size="sm" onClick={() => copy(h.secret)}>
-                      <Copy className="h-4 w-4" />
-                    </Button>
+                {kind === "generic" ? (
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">
+                      Secret de signature (vérifiez <code className="text-xs bg-muted px-1 rounded">x-reviewdrop-signature</code>)
+                    </p>
+                    <div className="flex gap-2">
+                      <code className="flex-1 text-xs bg-muted p-2 rounded font-mono truncate">{h.secret}</code>
+                      <Button variant="outline" size="sm" onClick={() => copy(h.secret)}>
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <p className="text-xs text-muted-foreground">
+                    Payload formaté automatiquement pour {KIND_LABEL[kind]} — aucun secret à configurer.
+                  </p>
+                )}
 
                 {hookDeliveries.length > 0 && (
                   <div>
