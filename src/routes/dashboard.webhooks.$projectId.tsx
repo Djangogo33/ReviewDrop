@@ -7,7 +7,24 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { ArrowLeft, Copy, Trash2, Send, Webhook } from "lucide-react";
+import { ArrowLeft, Copy, Trash2, Send, Webhook, ExternalLink } from "lucide-react";
+
+function detectKind(url: string): "discord" | "slack" | "generic" {
+  const u = (url || "").toLowerCase();
+  if (u.includes("discord.com/api/webhooks") || u.includes("discordapp.com/api/webhooks")) return "discord";
+  if (u.includes("hooks.slack.com/")) return "slack";
+  return "generic";
+}
+const KIND_STYLE: Record<string, string> = {
+  discord: "bg-indigo-100 text-indigo-700",
+  slack: "bg-emerald-100 text-emerald-700",
+  generic: "bg-muted text-muted-foreground",
+};
+const KIND_LABEL: Record<string, string> = {
+  discord: "Discord",
+  slack: "Slack",
+  generic: "Générique",
+};
 import {
   listWebhooks,
   createWebhook,
