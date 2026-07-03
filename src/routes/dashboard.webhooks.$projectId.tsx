@@ -279,11 +279,17 @@ function WebhooksPage() {
         <div className="space-y-4">
           {hooks.map((h) => {
             const hookDeliveries = deliveries.filter((d) => d.webhook_id === h.id).slice(0, 5);
+            const kind = detectKind(h.url);
             return (
               <div key={h.id} className="rounded-lg border border-border bg-card p-5 space-y-3">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
-                    <p className="font-medium text-sm break-all">{h.url}</p>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className={`text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded ${KIND_STYLE[kind]}`}>
+                        {KIND_LABEL[kind]}
+                      </span>
+                      <p className="font-medium text-sm break-all">{h.url}</p>
+                    </div>
                     <p className="text-xs text-muted-foreground mt-1">
                       Créé le {new Date(h.created_at).toLocaleDateString("fr-FR")}
                     </p>
@@ -328,17 +334,23 @@ function WebhooksPage() {
                   </div>
                 </div>
 
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">
-                    Secret de signature (à conserver, sert à vérifier <code className="text-xs bg-muted px-1 rounded">x-reviewdrop-signature</code>)
-                  </p>
-                  <div className="flex gap-2">
-                    <code className="flex-1 text-xs bg-muted p-2 rounded font-mono truncate">{h.secret}</code>
-                    <Button variant="outline" size="sm" onClick={() => copy(h.secret)}>
-                      <Copy className="h-4 w-4" />
-                    </Button>
+                {kind === "generic" ? (
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">
+                      Secret de signature (vérifiez <code className="text-xs bg-muted px-1 rounded">x-reviewdrop-signature</code>)
+                    </p>
+                    <div className="flex gap-2">
+                      <code className="flex-1 text-xs bg-muted p-2 rounded font-mono truncate">{h.secret}</code>
+                      <Button variant="outline" size="sm" onClick={() => copy(h.secret)}>
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <p className="text-xs text-muted-foreground">
+                    Payload formaté automatiquement pour {KIND_LABEL[kind]} — aucun secret à configurer.
+                  </p>
+                )}
 
                 {hookDeliveries.length > 0 && (
                   <div>
