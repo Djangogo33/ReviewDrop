@@ -189,10 +189,27 @@ function WebhooksPage() {
         <div>
           <h1 className="text-2xl font-bold">Webhooks</h1>
           <p className="text-sm text-muted-foreground">
-            Recevez une requête HTTP à chaque événement (feedback, statut, réponse). Chaque envoi est signé
-            (<code className="text-xs bg-muted px-1 rounded">x-reviewdrop-signature</code>).
+            Recevez une notification à chaque événement (feedback, statut, réponse).
+            Compatible <strong>Discord</strong>, <strong>Slack</strong> ou tout endpoint HTTP.
           </p>
         </div>
+      </div>
+
+      <div className="mb-6 rounded-lg border border-border bg-muted/40 p-4 text-sm space-y-2">
+        <p className="font-medium">Connecter Discord en 30 secondes</p>
+        <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
+          <li>Dans votre serveur Discord : <em>Paramètres du salon → Intégrations → Webhooks → Nouveau webhook</em>.</li>
+          <li>Copier l'URL du webhook.</li>
+          <li>La coller ci-dessous — le format Discord est appliqué automatiquement.</li>
+        </ol>
+        <a
+          href="https://support.discord.com/hc/fr/articles/228383668-Intro-to-Webhooks"
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-1 text-primary hover:underline text-xs"
+        >
+          Documentation Discord <ExternalLink className="h-3 w-3" />
+        </a>
       </div>
 
       <form
@@ -206,11 +223,19 @@ function WebhooksPage() {
             id="wh-url"
             type="url"
             required
-            placeholder="https://exemple.com/hooks/reviewdrop"
+            placeholder="https://discord.com/api/webhooks/... ou votre endpoint"
             value={newUrl}
             onChange={(e) => setNewUrl(e.target.value)}
             className="mt-1"
           />
+          {newUrl.trim() && (
+            <p className="mt-1 text-[11px] text-muted-foreground">
+              Format détecté :{" "}
+              <span className={`px-1.5 py-0.5 rounded ${KIND_STYLE[detectKind(newUrl)]}`}>
+                {KIND_LABEL[detectKind(newUrl)]}
+              </span>
+            </p>
+          )}
         </div>
         <div>
           <Label>Événements</Label>
