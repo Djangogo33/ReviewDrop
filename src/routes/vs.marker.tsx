@@ -9,7 +9,10 @@ export const Route = createFileRoute("/vs/marker")({
       { name: "description", content: "Comparatif honnête entre ReviewDrop, Marker.io et BugHerd : prix, fonctionnalités, ergonomie pour freelances et petits studios web." },
       { property: "og:title", content: "ReviewDrop vs Marker.io vs BugHerd" },
       { property: "og:description", content: "Quel outil de feedback visuel choisir en 2026 quand on est freelance ?" },
+      { property: "og:url", content: "https://reviewdrop.lovable.app/vs/marker" },
+      { property: "og:type", content: "article" },
     ],
+    links: [{ rel: "canonical", href: "https://reviewdrop.lovable.app/vs/marker" }],
   }),
   component: ComparisonPage,
 });

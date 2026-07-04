@@ -42,8 +42,9 @@ export const Route = createRootRoute({
       { name: "twitter:title", content: "ReviewDrop — Feedback client visuel en 30 secondes" },
       { property: "og:description", content: "Recueillez les retours de vos clients directement sur vos sites web et maquettes. Sans email, sans chaos. L'outil pensé pour les freelances web et graphistes." },
       { name: "twitter:description", content: "Recueillez les retours de vos clients directement sur vos sites web et maquettes. Sans email, sans chaos. L'outil pensé pour les freelances web et graphistes." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/543793ff-f950-47ea-bcdc-8c7b52aa0414" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/543793ff-f950-47ea-bcdc-8c7b52aa0414" },
+      // NOTE: og:image and twitter:image MUST live on leaf routes only.
+      // A root-level og:image is concatenated into every route and overrides
+      // each leaf's share preview. Set them per-route in src/routes/*.tsx.
     ],
     links: [
       {

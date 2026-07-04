@@ -32,6 +32,8 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "ReviewDrop — Feedback client visuel" },
       { name: "twitter:description", content: "Vos clients commentent directement sur vos sites et maquettes en 30 secondes." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/543793ff-f950-47ea-bcdc-8c7b52aa0414" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/543793ff-f950-47ea-bcdc-8c7b52aa0414" },
     ],
     links: [{ rel: "canonical", href: "https://reviewdrop.lovable.app/" }],
     scripts: [
