@@ -4,6 +4,8 @@ import { useIsAdmin } from "@/lib/use-is-admin";
 import { Button } from "@/components/ui/button";
 import { MessageSquarePlus, LayoutDashboard, CreditCard, LogOut, User, Code2, Gift, Ticket, ShieldCheck, BarChart3 } from "lucide-react";
 import { OnboardingTour } from "@/components/OnboardingTour";
+import { NotificationsBell } from "@/components/NotificationsBell";
+import { MobileNav } from "@/components/MobileNav";
 import { ReactNode } from "react";
 
 export function DashboardLayout({ children }: { children: ReactNode }) {
@@ -30,7 +32,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-screen bg-muted/30">
-      {/* Sidebar */}
+      {/* Sidebar desktop */}
       <aside className="hidden md:flex w-64 shrink-0 flex-col border-r border-border bg-card">
         <div className="flex h-16 items-center gap-2 border-b border-border px-6 font-bold">
           <span className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
@@ -67,18 +69,24 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
         </div>
       </aside>
 
-      {/* Mobile header */}
-      <div className="flex flex-1 flex-col">
-        <div className="md:hidden flex h-14 items-center justify-between border-b border-border bg-card px-4">
-          <Link to="/dashboard" className="flex items-center gap-2 font-bold">
-            <span className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              <MessageSquarePlus className="h-3.5 w-3.5" />
-            </span>
-            ReviewDrop
-          </Link>
-          <Button onClick={handleSignOut} variant="ghost" size="sm" aria-label="Se déconnecter">
-            <LogOut className="h-4 w-4" />
-          </Button>
+      <div className="flex flex-1 flex-col min-w-0">
+        {/* Top bar */}
+        <div className="flex h-14 items-center justify-between border-b border-border bg-card px-3 md:px-6">
+          <div className="flex items-center gap-2 md:hidden">
+            <MobileNav items={navItems} onSignOut={handleSignOut} />
+            <Link to="/dashboard" className="flex items-center gap-2 font-bold">
+              <span className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
+                <MessageSquarePlus className="h-3.5 w-3.5" />
+              </span>
+              ReviewDrop
+            </Link>
+          </div>
+          <div className="hidden md:block text-sm text-muted-foreground truncate">
+            {user?.email}
+          </div>
+          <div className="flex items-center gap-1">
+            <NotificationsBell />
+          </div>
         </div>
         <div className="flex-1">{children}</div>
       </div>
