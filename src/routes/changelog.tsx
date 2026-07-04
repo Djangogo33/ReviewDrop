@@ -8,7 +8,10 @@ export const Route = createFileRoute("/changelog")({
       { name: "description", content: "Toutes les nouveautés et améliorations de ReviewDrop, mises à jour chaque semaine pendant la beta." },
       { property: "og:title", content: "Changelog ReviewDrop" },
       { property: "og:description", content: "Suivez l'évolution de ReviewDrop semaine après semaine." },
+      { property: "og:url", content: "https://reviewdrop.lovable.app/changelog" },
+      { property: "og:type", content: "website" },
     ],
+    links: [{ rel: "canonical", href: "https://reviewdrop.lovable.app/changelog" }],
   }),
   component: ChangelogPage,
 });

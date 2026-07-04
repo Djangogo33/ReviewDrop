@@ -12,7 +12,10 @@ export const Route = createFileRoute("/demo")({
       { name: "description", content: "Testez ReviewDrop en direct : placez une épingle, laissez un commentaire, voyez le résultat. Sans inscription." },
       { property: "og:title", content: "Démo ReviewDrop — Essayez sans inscription" },
       { property: "og:description", content: "Testez le widget de feedback visuel en 30 secondes." },
+      { property: "og:url", content: "https://reviewdrop.lovable.app/demo" },
+      { property: "og:type", content: "website" },
     ],
+    links: [{ rel: "canonical", href: "https://reviewdrop.lovable.app/demo" }],
   }),
   component: DemoPage,
 });

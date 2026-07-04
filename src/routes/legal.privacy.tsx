@@ -5,7 +5,9 @@ export const Route = createFileRoute("/legal/privacy")({
     meta: [
       { title: "Politique de confidentialité — ReviewDrop" },
       { name: "description", content: "Politique de confidentialité et traitement des données personnelles." },
+      { property: "og:url", content: "https://reviewdrop.lovable.app/legal/privacy" },
     ],
+    links: [{ rel: "canonical", href: "https://reviewdrop.lovable.app/legal/privacy" }],
   }),
   component: PrivacyPage,
 });
