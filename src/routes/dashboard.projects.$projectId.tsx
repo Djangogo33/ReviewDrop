@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { ArrowLeft, Copy, Check, Trash2, Settings, ExternalLink, Download, Lock, Inbox, Webhook, Sparkles } from "lucide-react";
+import { ArrowLeft, Copy, Check, Trash2, Settings, ExternalLink, Download, Lock, Inbox, Webhook, Sparkles, Search, X } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Tables } from "@/integrations/supabase/types";
 import { getLimits, normalizePlan, type PlanId, DEFAULT_BRAND_COLOR } from "@/lib/plans";
@@ -91,6 +91,7 @@ function ProjectPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [search, setSearch] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -153,18 +154,22 @@ function ProjectPage() {
     };
   }, [projectId, user]);
 
-  const filtered = useMemo(
-    () =>
-      feedbacks.filter((f) => {
-        if (statusFilter !== "all" && f.status !== statusFilter) return false;
-        if (categoryFilter !== "all") {
-          const cat = (f as Feedback & { category?: string | null }).category ?? "uncategorized";
-          if (cat !== categoryFilter) return false;
-        }
-        return true;
-      }),
-    [feedbacks, statusFilter, categoryFilter],
-  );
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return feedbacks.filter((f) => {
+      if (statusFilter !== "all" && f.status !== statusFilter) return false;
+      if (categoryFilter !== "all") {
+        const cat = (f as Feedback & { category?: string | null }).category ?? "uncategorized";
+        if (cat !== categoryFilter) return false;
+      }
+      if (q) {
+        const email = (f as Feedback & { author_email?: string }).author_email ?? "";
+        const hay = `${f.message} ${f.author_name} ${email} ${f.page_url ?? ""}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+  }, [feedbacks, statusFilter, categoryFilter, search]);
 
   const selected = feedbacks.find((f) => f.id === selectedId) ?? null;
 
@@ -323,7 +328,7 @@ function ProjectPage() {
         <select
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
-          className="text-xs rounded-full border border-border bg-card px-3 py-1.5 hover:bg-muted ml-auto"
+          className="text-xs rounded-full border border-border bg-card px-3 py-1.5 hover:bg-muted"
           aria-label="Filtrer par catégorie"
         >
           <option value="all">Toutes catégories</option>
@@ -332,7 +337,32 @@ function ProjectPage() {
           ))}
           <option value="uncategorized">Non catégorisé</option>
         </select>
+        <div className="relative ml-auto w-full sm:w-64">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+          <input
+            type="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Rechercher un feedback…"
+            className="w-full text-xs rounded-full border border-border bg-card pl-8 pr-8 py-1.5 hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/40"
+            aria-label="Rechercher"
+          />
+          {search && (
+            <button
+              onClick={() => setSearch("")}
+              aria-label="Effacer la recherche"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-0.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          )}
+        </div>
       </div>
+      {search && (
+        <p className="text-xs text-muted-foreground mb-3">
+          {filtered.length} résultat{filtered.length > 1 ? "s" : ""} pour « {search} »
+        </p>
+      )}
 
       {feedbacks.length === 0 ? (
         <EmptyFeedbacks
