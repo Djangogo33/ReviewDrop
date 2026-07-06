@@ -436,7 +436,8 @@ function ProjectPage() {
               onRecategorize={() => runRecategorize(selected.id)}
             />
           ) : (
-            filtered.map((f) => (
+            <>
+            {paginated.map((f) => (
               <button
                 key={f.id}
                 onClick={() => openFeedback(f.id)}
@@ -472,7 +473,31 @@ function ProjectPage() {
                   {new Date(f.created_at).toLocaleString("fr-FR")}
                 </p>
               </button>
-            ))
+            ))}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between gap-2 pt-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage <= 1}
+                >
+                  Précédent
+                </Button>
+                <span className="text-xs text-muted-foreground">
+                  Page {currentPage} / {totalPages} · {filtered.length} feedback{filtered.length > 1 ? "s" : ""}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={currentPage >= totalPages}
+                >
+                  Suivant
+                </Button>
+              </div>
+            )}
+            </>
           )}
         </div>
       </div>
