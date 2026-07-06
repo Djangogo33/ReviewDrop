@@ -92,6 +92,8 @@ function ProjectPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [search, setSearch] = useState<string>("");
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 20;
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -170,6 +172,15 @@ function ProjectPage() {
       return true;
     });
   }, [feedbacks, statusFilter, categoryFilter, search]);
+
+  useEffect(() => { setPage(1); }, [statusFilter, categoryFilter, search]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const paginated = useMemo(
+    () => filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE),
+    [filtered, currentPage],
+  );
 
   const selected = feedbacks.find((f) => f.id === selectedId) ?? null;
 
@@ -425,7 +436,8 @@ function ProjectPage() {
               onRecategorize={() => runRecategorize(selected.id)}
             />
           ) : (
-            filtered.map((f) => (
+            <>
+            {paginated.map((f) => (
               <button
                 key={f.id}
                 onClick={() => openFeedback(f.id)}
@@ -461,7 +473,31 @@ function ProjectPage() {
                   {new Date(f.created_at).toLocaleString("fr-FR")}
                 </p>
               </button>
-            ))
+            ))}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between gap-2 pt-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage <= 1}
+                >
+                  Précédent
+                </Button>
+                <span className="text-xs text-muted-foreground">
+                  Page {currentPage} / {totalPages} · {filtered.length} feedback{filtered.length > 1 ? "s" : ""}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={currentPage >= totalPages}
+                >
+                  Suivant
+                </Button>
+              </div>
+            )}
+            </>
           )}
         </div>
       </div>
