@@ -361,6 +361,18 @@ function Landing() {
           <div>© {new Date().getFullYear()} ReviewDrop. Fait en France.</div>
         </div>
       </footer>
+
+      {/* Sticky mobile CTA */}
+      {!user && (
+        <div className="fixed bottom-0 inset-x-0 z-40 md:hidden border-t border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 px-4 py-3 flex gap-2 shadow-lg">
+          <Link to="/demo" className="flex-1">
+            <Button variant="outline" className="w-full" size="sm">Démo</Button>
+          </Link>
+          <Link to="/signup" className="flex-1">
+            <Button className="w-full" size="sm">Essai gratuit</Button>
+          </Link>
+        </div>
+      )}
     </div>
   );
 }
