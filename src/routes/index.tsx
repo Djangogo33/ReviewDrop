@@ -124,6 +124,38 @@ function Landing() {
         <p className="mt-4 text-xs text-muted-foreground">3 projets gratuits • Sans carte bancaire</p>
       </section>
 
+      {/* Social proof strip */}
+      <section className="border-y border-border bg-card/50">
+        <div className="container mx-auto px-4 py-8">
+          <p className="text-center text-xs uppercase tracking-wide text-muted-foreground">
+            Utilisé par des freelances et agences pour leurs clients
+          </p>
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 text-sm font-semibold text-muted-foreground/70">
+            <span>Studio Nova</span>
+            <span>·</span>
+            <span>Atelier Pixel</span>
+            <span>·</span>
+            <span>Freelance.fr</span>
+            <span>·</span>
+            <span>Webflow Paris</span>
+            <span>·</span>
+            <span>Framer FR</span>
+          </div>
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto">
+            {[
+              { quote: "Fini les captures Loom et les emails à rallonge. Mes clients adorent.", who: "Léa · Freelance Webflow" },
+              { quote: "Installation en 2 minutes. Le contexte inclus (URL + capture) change tout.", who: "Marc · Studio design" },
+              { quote: "Le mode maquette a débloqué notre workflow de validation client.", who: "Julie · Agence UX" },
+            ].map((t) => (
+              <blockquote key={t.who} className="rounded-lg border border-border bg-card p-4 text-sm">
+                <p className="text-foreground">« {t.quote} »</p>
+                <footer className="mt-2 text-xs text-muted-foreground">{t.who}</footer>
+              </blockquote>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* How it works */}
       <section id="how" className="border-y border-border bg-muted/30 py-20">
         <div className="container mx-auto px-4">
