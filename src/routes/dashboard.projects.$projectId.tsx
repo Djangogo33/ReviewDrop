@@ -173,6 +173,15 @@ function ProjectPage() {
     });
   }, [feedbacks, statusFilter, categoryFilter, search]);
 
+  useEffect(() => { setPage(1); }, [statusFilter, categoryFilter, search]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const paginated = useMemo(
+    () => filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE),
+    [filtered, currentPage],
+  );
+
   const selected = feedbacks.find((f) => f.id === selectedId) ?? null;
 
   const counts = useMemo(() => {
