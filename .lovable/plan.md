@@ -1,77 +1,52 @@
-# Plan d'amélioration ReviewDrop
+# Plan global — améliorations transversales
 
-Objectif : renforcer conversion, UX, fonctionnalités et qualité — sans toucher aux paiements. Découpé en 4 lots livrables indépendamment.
+L'utilisateur veut avancer sur tous les axes. Voici un plan ordonné, du plus impactant au plus fin, pour être livré en plusieurs lots successifs.
 
----
+## Lot A — Landing & conversion (public)
 
-## Lot 1 — Conversion & landing (`src/routes/index.tsx`)
+- **Hero refonte** sur `/` : promesse claire ("Récoltez du feedback client en 30 secondes"), sous-titre bénéfices, double CTA (Essai gratuit / Voir la démo), visuel produit annoté.
+- **Preuve sociale** : bandeau logos + 3 témoignages courts + compteur ("X feedbacks collectés").
+- **Nouvelle route `/features`** : 6 blocs bénéfices (widget 1-ligne, maquettes, screenshots auto, catégorisation IA, webhooks, export CSV), chacun avec icône + capture.
+- **Nouvelle route `/pricing`** : tableau Free/Pro/Max lisible, FAQ tarifs, CTA vers `/signup`. Head SEO propre (title, description, og:*, canonical).
+- **CTA sticky** en bas de landing sur mobile.
 
-But : donner envie d'essayer en < 10 secondes.
+## Lot B — UX Dashboard (suite Lot 2)
 
-- **Hero plus vendeur** : titre orienté bénéfice ("Collectez les retours de vos utilisateurs, sans friction"), sous-titre, double CTA (Essayer gratuitement / Voir la démo), badge "Beta gratuite".
-- **Preuve sociale** : bandeau logos "propulsé sur X projets", 2–3 témoignages courts (placeholders honnêtes en beta).
-- **Section "Comment ça marche"** en 3 étapes (Créer projet → Coller le widget → Recevoir feedbacks + notifs Discord).
-- **Section fonctionnalités** en grille (Widget 1-ligne, Catégorisation IA, Réponses, Webhooks Discord/Slack, Export CSV, Analytics).
-- **Aperçu widget interactif** existant (`InteractiveDemo`) mis en avant plus haut.
-- **FAQ** (6 questions) + **CTA final**.
-- **SEO** : title/description/OG spécifiques, JSON-LD `SoftwareApplication`, canonical.
-- **Pages dédiées** manquantes : `/features`, `/pricing` (déjà `billing` côté app mais page publique lisible), `/vs/*` (déjà `vs.marker`, ajouter 1–2 comparatifs).
+- **Assignation** : ajout colonne `assigned_to` sur `feedbacks` (migration + policies + GRANT), sélecteur d'assigné dans le drawer détail, filtre "Mes feedbacks".
+- **Tags manuels** : table `feedback_tags` (id, project_id, label, color) + join `feedback_tag_map`, UI de gestion dans les paramètres projet, affichage/filtrage dans la liste.
+- **Raccourcis clavier** dans la vue projet : `j`/`k` navigation, `1/2/3` statut, `e` marquer lu, `?` aide.
+- **États vides scénarisés** : dashboard sans projet → tuto 3 étapes, projet sans feedback → snippet + lien démo.
 
-## Lot 2 — UX Dashboard
+## Lot C — Nouvelles fonctionnalités
 
-- **Onboarding tour** : vérifier qu'il se déclenche bien au 1er login (flag `onboarding_seen` sur profile) et couvre : créer projet → installer widget → voir feedback → configurer webhook.
-- **États vides** soignés partout (projets, feedbacks, webhooks, analytics) avec CTA clair + capture d'écran d'exemple.
-- **Feedbacks** :
-  - Recherche plein texte + filtres combinables (catégorie, statut, note, date) déjà présents → ajouter tri, pagination, compteur.
-  - Vue détail feedback en drawer plutôt que reload.
-  - Actions rapides (changer statut, répondre) au survol.
-- **Realtime** : brancher `supabase.channel` sur `feedbacks` et `feedback_replies` pour maj live (déjà partiellement en place, à vérifier).
-- **Navigation** : sidebar mobile propre, breadcrumbs sur pages profondes, indicateur de projet actif.
-- **Notifications in-app** (cloche) pour nouveaux feedbacks non lus.
+- **Notifications email** : préférence par projet (immédiat / digest quotidien), envoi via l'infra Emails Lovable (queue `transactional_emails`) déclenché sur `feedback.created`.
+- **Roadmap publique** : nouvelle route `/roadmap/$projectId` en lecture seule des feedbacks marqués `is_public`, vote anonyme (table `feedback_votes` avec ip_hash), tri par votes.
+- **Widget** : options `position` (bottom-right/left, top-*), `theme` (auto/light/dark), `hide_on_mobile`. Réglages exposés dans `dashboard/install` et servis via `/api/public/widget-config/$token`.
 
-## Lot 3 — Nouvelles fonctionnalités
+## Lot D — Qualité & fiabilité (suite Lot 4)
 
-Prioritaires (impact / effort) :
+- **Sitemap** : passer de `sitemap[.]xml.ts` actuel à une génération dynamique incluant `/features`, `/pricing`, `/roadmap/*` publics.
+- **Accessibilité** : audit rapide (focus visible, labels, contrastes, aria-labels sur icônes cliquables), correctifs ciblés.
+- **Perf** : lazy-load images landing, `loading="lazy"` + `decoding="async"`, préconnect fonts, code-split pages admin.
+- **Tests Playwright** : 3 scénarios critiques (signup → création projet → snippet visible ; envoi feedback via widget → apparition realtime ; upgrade code promo).
 
-1. **Notifications email** au propriétaire à chaque nouveau feedback (via Lovable email + template simple, opt-in dans les settings projet).
-2. **Tags manuels** sur feedbacks (en plus de la catégorie IA) + filtre par tag.
-3. **Assignation** d'un feedback à un membre (préparer table `project_members`, pour l'instant = owner seulement).
-4. **Vue publique roadmap** optionnelle par projet (`/p/:slug/roadmap`) : feedbacks marqués "planned/in-progress/done", votes anonymes.
-5. **Widget** : props supplémentaires (position, langue FR/EN, thème dark auto), capture d'écran optionnelle (html2canvas), champ email optionnel configurable.
-6. **Export CSV** : ajouter export JSON + filtrable selon la vue courante.
-7. **Webhooks** : ajouter Microsoft Teams (même principe que Discord/Slack) et event `feedback.deleted`.
+## Ordre de livraison proposé
 
-## Lot 4 — Qualité & fiabilité
+```text
+1. Lot A (landing & pricing) — plus fort levier commercial
+2. Lot B (assignation + tags + raccourcis)
+3. Lot C (emails + roadmap + options widget)
+4. Lot D (sitemap étendu, a11y, perf, Playwright)
+```
 
-- **Audit runtime** : parcours complet (signup, création projet, submit widget, réponse, webhook test, export, delete account) → corriger bugs trouvés.
-- **SEO global** : `sitemap.xml` à jour avec toutes les routes publiques, `robots.txt` OK, meta par route (login, signup, changelog, legal, demo, vs).
-- **Accessibilité** : labels aria manquants, contraste, focus visible, navigation clavier sur drawers/dialogs.
-- **Perf** : lazy-load routes dashboard, images en `loading="lazy"`, `Suspense` sur listes lourdes.
-- **i18n** : le site est mixte FR/EN → choisir une langue par défaut (FR vu le contenu) et harmoniser, ou préparer i18n light (dictionnaire simple).
-- **Erreurs** : `errorComponent` + `notFoundComponent` sur toutes les routes avec loader, page 404 custom.
-- **Sécurité** : relire policies RLS des tables clés (`feedbacks`, `webhooks`, `webhook_deliveries`, `projects`, `user_roles`), `security--run_security_scan`.
-- **Analytics interne** : vérifier que la page `/dashboard/analytics` affiche bien tout (volumes, catégories, taux de réponse, tendance).
+Chaque lot est livré indépendamment, avec vérif TypeScript et rapide check visuel avant de passer au suivant.
 
----
+## Détails techniques (résumé)
 
-## Ordre d'exécution proposé
+- Nouvelles routes publiques : `src/routes/features.tsx`, `src/routes/pricing.tsx`, `src/routes/roadmap.$projectId.tsx` avec head SEO complet (title, description, og:title/description/url/type, canonical leaf-only).
+- Migrations Supabase : `feedbacks.assigned_to uuid`, tables `feedback_tags`, `feedback_tag_map`, `feedback_votes`, `notification_prefs` — chacune avec GRANT + RLS scoped `auth.uid()` et policies owner-only, sauf `feedback_votes` (INSERT anon avec rate-limit ip_hash) et lecture publique roadmap (SELECT anon sur `is_public = true`).
+- Emails via `email_domain--setup_email_infra` (queue + cron), template React Email, enqueue depuis un serverFn déclenché après insert.
+- Options widget servies par la route publique existante `api.public.widget-config.$token`, appliquées côté `public/widget.js`.
+- Playwright dans `/tmp/browser/` (script + screenshots), pas de fichier tracké dans le repo tant qu'on n'a pas de CI dédié.
 
-1. Lot 4 (bugs + SEO + a11y) — base saine.
-2. Lot 2 (UX dashboard + realtime + onboarding) — rétention.
-3. Lot 1 (landing + pages publiques) — acquisition.
-4. Lot 3 (nouvelles fonctionnalités) — par ordre d'impact (emails → tags → roadmap publique → widget → Teams).
-
-## Détails techniques
-
-- Emails : `Lovable AI Gateway` non applicable → utiliser Resend via connector standard (`standard_connectors--connect`) ou fonction email intégrée.
-- Realtime : `supabase.channel('feedbacks:project=' + id).on('postgres_changes', …)` côté client, invalider la query TanStack correspondante.
-- Roadmap publique : nouvelle route `src/routes/p.$slug.roadmap.tsx`, RLS lecture publique filtrée sur `feedbacks.is_public = true`.
-- Tags : nouvelle table `feedback_tags(id, project_id, label, color)` + `feedback_tag_links(feedback_id, tag_id)`, GRANT + RLS via `has_role`/ownership.
-- Notifications email : préférence par projet `email_notifications_enabled boolean default true`, envoi dans `api.public.feedback.ts` après insert.
-- Sitemap : régénérer depuis `routeTree.gen.ts` ou lister à la main dans `sitemap[.]xml.ts`.
-
-## Hors périmètre
-
-- Paiements (Stripe/Paddle/plans) : intacts.
-- Refonte visuelle radicale : ce plan garde le design system actuel.
-- Multi-workspace / équipes payantes : différé (préparation seulement via `project_members`).
+Est-ce que je commence par le **Lot A** ?
