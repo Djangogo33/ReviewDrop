@@ -92,6 +92,8 @@ function ProjectPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [search, setSearch] = useState<string>("");
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 20;
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
