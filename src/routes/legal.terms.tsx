@@ -4,7 +4,9 @@ export const Route = createFileRoute("/legal/terms")({
   head: () => ({
     meta: [
       { title: "Conditions Générales d'Utilisation — ReviewDrop" },
-      { name: "description", content: "Conditions générales d'utilisation du service ReviewDrop." },
+      { name: "description", content: "CGU du service ReviewDrop : compte, abonnements, responsabilités et résiliation." },
+      { property: "og:title", content: "CGU — ReviewDrop" },
+      { property: "og:description", content: "Conditions générales d'utilisation de la plateforme ReviewDrop." },
       { property: "og:url", content: "https://reviewdrop.lovable.app/legal/terms" },
     ],
     links: [{ rel: "canonical", href: "https://reviewdrop.lovable.app/legal/terms" }],

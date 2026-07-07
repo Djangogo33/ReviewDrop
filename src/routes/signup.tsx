@@ -20,6 +20,7 @@ export const Route = createFileRoute("/signup")({
       { name: "description", content: "Créez votre compte ReviewDrop gratuitement et commencez à recueillir des feedbacks visuels de vos clients en quelques minutes." },
       { property: "og:title", content: "Créer un compte ReviewDrop" },
       { property: "og:description", content: "Inscription gratuite : centralisez les retours clients sur vos sites et maquettes en 30 secondes." },
+      { name: "robots", content: "noindex" },
     ],
   }),
   validateSearch: (search: Record<string, unknown>): SignupSearch => ({

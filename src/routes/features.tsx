@@ -19,13 +19,13 @@ export const Route = createFileRoute("/features")({
       {
         name: "description",
         content:
-          "Widget 1 ligne, mode maquette, screenshots automatiques, catégorisation IA, webhooks, export CSV : tout ce qu'il faut pour recueillir du feedback client sans friction.",
+          "Widget 1 ligne, mode maquette, screenshots auto, catégorisation IA, webhooks, export CSV. Tout pour recueillir du feedback client sans friction.",
       },
       { property: "og:title", content: "Fonctionnalités — ReviewDrop" },
       {
         property: "og:description",
         content:
-          "Tout ce que ReviewDrop met à votre disposition pour récolter des retours clients pertinents en 30 secondes.",
+          "Widget, mode maquette, screenshots, IA, webhooks : récoltez des retours clients pertinents en 30 secondes.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://reviewdrop.lovable.app/features" },

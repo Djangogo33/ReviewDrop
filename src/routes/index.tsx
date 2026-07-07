@@ -23,7 +23,7 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "ReviewDrop — Feedback client visuel en 30 secondes" },
-      { name: "description", content: "Recueillez les retours de vos clients directement sur vos sites web et maquettes. Sans email, sans chaos. L'outil pensé pour les freelances web et graphistes." },
+      { name: "description", content: "Vos clients commentent vos sites et maquettes en 30 secondes, avec URL, position du clic et capture d'écran. Sans email, sans chaos." },
       { property: "og:title", content: "ReviewDrop — Feedback client visuel pour freelances" },
       { property: "og:description", content: "Vos clients commentent directement sur vos sites et maquettes en 30 secondes." },
       { property: "og:type", content: "website" },
