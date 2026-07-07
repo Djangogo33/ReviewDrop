@@ -12,6 +12,7 @@ export const Route = createFileRoute("/forgot-password")({
     meta: [
       { title: "Mot de passe oublié — ReviewDrop" },
       { name: "description", content: "Réinitialisez votre mot de passe ReviewDrop." },
+      { name: "robots", content: "noindex" },
     ],
   }),
   component: ForgotPassword,

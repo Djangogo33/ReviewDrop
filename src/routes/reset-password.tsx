@@ -12,6 +12,7 @@ export const Route = createFileRoute("/reset-password")({
     meta: [
       { title: "Nouveau mot de passe — ReviewDrop" },
       { name: "description", content: "Choisissez un nouveau mot de passe." },
+      { name: "robots", content: "noindex" },
     ],
   }),
   component: ResetPassword,

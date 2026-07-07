@@ -31,8 +31,8 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "ReviewDrop — Feedback client visuel en 30 secondes" },
-      { name: "description", content: "Recueillez les retours de vos clients directement sur vos sites web et maquettes. Sans email, sans chaos. L'outil pensé pour les freelances web et graphistes." },
+      { title: "ReviewDrop — Feedback client visuel" },
+      { name: "description", content: "Recueillez les retours clients directement sur vos sites et maquettes. Sans email, sans chaos. Pensé pour les freelances web." },
       { name: "author", content: "ReviewDrop" },
       { property: "og:site_name", content: "ReviewDrop" },
       { property: "og:type", content: "website" },
@@ -40,8 +40,8 @@ export const Route = createRootRoute({
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:title", content: "ReviewDrop — Feedback client visuel en 30 secondes" },
       { name: "twitter:title", content: "ReviewDrop — Feedback client visuel en 30 secondes" },
-      { property: "og:description", content: "Recueillez les retours de vos clients directement sur vos sites web et maquettes. Sans email, sans chaos. L'outil pensé pour les freelances web et graphistes." },
-      { name: "twitter:description", content: "Recueillez les retours de vos clients directement sur vos sites web et maquettes. Sans email, sans chaos. L'outil pensé pour les freelances web et graphistes." },
+      { property: "og:description", content: "Retours clients visuels sur vos sites et maquettes. Sans email, sans chaos. Pensé pour freelances web." },
+      { name: "twitter:description", content: "Retours clients visuels sur vos sites et maquettes. Sans email, sans chaos. Pensé pour freelances web." },
       // NOTE: og:image and twitter:image MUST live on leaf routes only.
       // A root-level og:image is concatenated into every route and overrides
       // each leaf's share preview. Set them per-route in src/routes/*.tsx.
